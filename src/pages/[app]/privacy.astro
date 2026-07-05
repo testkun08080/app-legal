@@ -1,0 +1,27 @@
+---
+import LegalLayout from '@/layouts/LegalLayout.astro';
+import { apps } from '@/config/apps/index';
+import { appPaths, getLegalDoc } from '@/lib/legal';
+
+export function getStaticPaths() {
+  return appPaths(apps);
+}
+
+const { app } = Astro.props;
+const doc = await getLegalDoc(app.slug, 'privacy');
+
+if (!doc) {
+  throw new Error(`Missing privacy document for app: ${app.slug}`);
+}
+
+const { Content } = await doc.render();
+---
+
+<LegalLayout
+  title={doc.data.title}
+  app={app}
+  currentPath="privacy"
+  updated={doc.data.updated}
+>
+  <Content />
+</LegalLayout>

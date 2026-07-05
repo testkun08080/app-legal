@@ -1,0 +1,24 @@
+---
+import LegalLayout from '@/layouts/LegalLayout.astro';
+import { apps } from '@/config/apps/index';
+---
+
+<LegalLayout title="アプリ一覧">
+  <p>各アプリのプライバシーポリシー・利用規約・サポート情報です。</p>
+
+  <ul class="app-grid">
+    {
+      apps.map((app) => (
+        <li class="app-card">
+          <h2>{app.name}</h2>
+          <p>{app.tagline}</p>
+          <div class="app-card__links">
+            <a href={`${import.meta.env.BASE_URL}${app.slug}/`}>サポート</a>
+            <a href={`${import.meta.env.BASE_URL}${app.slug}/privacy/`}>プライバシーポリシー</a>
+            <a href={`${import.meta.env.BASE_URL}${app.slug}/terms/`}>利用規約</a>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</LegalLayout>

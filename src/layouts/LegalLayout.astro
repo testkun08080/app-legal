@@ -1,0 +1,100 @@
+---
+import '@/styles/global.css';
+import { site } from '@/config/site';
+import type { AppConfig } from '@/config/apps/index';
+import { getSupportEmail } from '@/config/apps/index';
+
+interface Props {
+  title: string;
+  app?: AppConfig;
+  currentPath?: 'support' | 'privacy' | 'terms';
+  updated?: Date;
+  children?: import('astro/types').HTMLAttributes['children'];
+}
+
+const { title, app, currentPath, updated } = Astro.props;
+const supportEmail = app ? getSupportEmail(app) : site.defaultSupportEmail;
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={app ? `${app.name} — ${title}` : title} />
+    <title>{title}{app ? ` — ${app.name}` : ''}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <p class="site-header__title">
+          <a href={`${import.meta.env.BASE_URL}`}>App Legal</a>
+        </p>
+        {app && <p class="site-header__subtitle">{app.name}</p>}
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">{title}</h1>
+
+      {
+        updated && (
+          <p class="page-meta">
+            最終更新日: {formatDate(updated)}
+            {site.operatorName !== '[氏名または屋号]' && <> · 運営者: {site.operatorName}</>}
+          </p>
+        )
+      }
+
+      {
+        app && (
+          <ul class="nav-links">
+            <li>
+              <a href={`${import.meta.env.BASE_URL}${app.slug}/`} aria-current={currentPath === 'support' ? 'page' : undefined}>
+                サポート
+              </a>
+            </li>
+            <li>
+              <a
+                href={`${import.meta.env.BASE_URL}${app.slug}/privacy/`}
+                aria-current={currentPath === 'privacy' ? 'page' : undefined}
+              >
+                プライバシーポリシー
+              </a>
+            </li>
+            <li>
+              <a
+                href={`${import.meta.env.BASE_URL}${app.slug}/terms/`}
+                aria-current={currentPath === 'terms' ? 'page' : undefined}
+              >
+                利用規約
+              </a>
+            </li>
+          </ul>
+        )
+      }
+
+      <div class="prose">
+        <slot />
+      </div>
+
+      {
+        app && currentPath !== 'support' && (
+          <div class="contact-block">
+            <p>
+              お問い合わせ:{' '}
+              <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+            </p>
+          </div>
+        )
+      }
+    </main>
+
+    <footer class="site-footer">
+      <p>&copy; {new Date().getFullYear()} {site.operatorName}</p>
+    </footer>
+  </body>
+</html>
