@@ -2,6 +2,7 @@
 import LegalLayout from '@/layouts/LegalLayout.astro';
 import { apps } from '@/config/apps/index';
 import { appPaths, getLegalDoc } from '@/lib/legal';
+import { render } from 'astro:content';
 
 export function getStaticPaths() {
   return appPaths(apps);
@@ -14,7 +15,7 @@ if (!doc) {
   throw new Error(`Missing privacy document for app: ${app.slug}`);
 }
 
-const { Content } = await doc.render();
+const { Content } = await render(doc);
 ---
 
 <LegalLayout
