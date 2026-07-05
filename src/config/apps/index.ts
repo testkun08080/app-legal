@@ -16,7 +16,7 @@ export function getSupportEmail(app: AppConfig): string {
 }
 
 export function getSiteBaseUrl(): string {
-  return `https://${site.githubUsername}.github.io/${site.repoName}`;
+  return site.publicBaseUrl;
 }
 
 export function getAppUrl(slug: string, path?: string): string {
