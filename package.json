@@ -1,10 +1,15 @@
 {
   "name": "app-legal",
+  "description": "Astro site template for app privacy policy, terms, and support pages.",
   "type": "module",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "astro dev",
+    "check": "astro check",
+    "lint": "astro check",
+    "test": "npm run check",
     "build": "astro build",
     "preview": "astro preview",
     "new-app": "node scripts/new-app.mjs"

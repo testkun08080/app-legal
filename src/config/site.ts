@@ -3,7 +3,7 @@
  */
 export const site = {
   operatorName: 'testkun08080',
-  defaultSupportEmail: '154046906+testkun08080@users.noreply.github.com',
+  defaultSupportEmail: 'support@legal.testkun.net',
   githubUsername: 'testkun08080',
   repoName: 'app-legal',
   /** 公開 URL（GitHub Pages カスタムドメイン） */

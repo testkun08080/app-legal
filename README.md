@@ -1,57 +1,65 @@
 # app-legal
 
-App Store 提出用のプライバシーポリシー・利用規約・サポートページを、**アプリ slug ごと**に GitHub Pages で公開する Astro サイトです。
+App Store 提出用のプライバシーポリシー・利用規約・サポートページを、**アプリ slug ごと**に公開する Astro サイトです。
 
-## URL 構造
+## 公開URL
 
-```
-https://{github-username}.github.io/app-legal/                    # アプリ一覧
-https://{github-username}.github.io/app-legal/life-office/        # サポート
-https://{github-username}.github.io/app-legal/life-office/privacy/
-https://{github-username}.github.io/app-legal/life-office/terms/
-```
+現在の設定はカスタムドメイン運用です。
+
+- サイト: `https://legal.testkun.net/`
+- 例: `https://legal.testkun.net/life-office/privacy/`
+
+> `astro.config.mjs` は `base: '/'` です。サブパス（`/app-legal`）前提ではありません。
+
+## 前提環境
+
+- Node.js 22 以上（CI では Node.js 22 を利用）
+- npm 10 以上を推奨
 
 ## 初回セットアップ
 
-### 1. 依存関係のインストール
+### 1. 依存関係をインストール
 
 ```bash
 npm install
 ```
 
-### 2. サイト設定を編集
+### 2. サイト設定を更新
 
-[`src/config/site.ts`](src/config/site.ts) を開き、以下を実際の値に差し替えます。
+[`src/config/site.ts`](src/config/site.ts) を開き、公開用の情報に置き換えてください。
 
 ```ts
 export const site = {
-  operatorName: 'あなたの名前または屋号',
+  operatorName: 'Your Name or Brand',
   defaultSupportEmail: 'support@example.com',
   githubUsername: 'your-github-username',
   repoName: 'app-legal',
+  publicBaseUrl: 'https://example.com',
 } as const;
 ```
 
-[`astro.config.mjs`](astro.config.mjs) の `site` も合わせて更新してください。
+[`astro.config.mjs`](astro.config.mjs) の `site` も合わせて更新します。
 
 ```js
-site: 'https://your-github-username.github.io',
-base: '/app-legal',
+site: 'https://example.com',
+base: '/',
 ```
 
-### 3. ローカルプレビュー
+### 3. ローカル確認
 
 ```bash
 npm run dev
 ```
 
-http://localhost:4321/app-legal/ で確認できます。
+`http://localhost:4321/` で確認できます。
 
 ### 4. GitHub Pages デプロイ
 
 1. リポジトリを GitHub に push
 2. **Settings → Pages → Build and deployment → Source: GitHub Actions**
-3. `main` ブランチへ push すると [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) が自動デプロイ
+3. `main` ブランチへ push すると [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) がデプロイ
+
+カスタムドメインを使う場合は [`public/CNAME`](public/CNAME) を実運用のドメインに合わせて設定してください。
 
 ## 新しいアプリを追加
 
@@ -67,71 +75,40 @@ npm run new-app my-app "My App Name" support@example.com
 
 生成されるファイル:
 
-- `src/config/apps/<slug>.ts` — アプリメタデータ（supportEmail はアプリ別に設定可）
+- `src/config/apps/<slug>.ts`
 - `src/content/legal/<slug>/privacy.md`
 - `src/content/legal/<slug>/terms.md`
 
-`src/config/apps/index.ts` への registry 追記も自動で行われます。
+`src/config/apps/index.ts` の registry 追記も自動で行われます。
 
-### 追加後の作業
+追加後の作業:
 
-1. `privacy.md` / `terms.md` の本文をアプリに合わせて編集
+1. `privacy.md` / `terms.md` を編集
 2. `npm run dev` で表示確認
 3. `git push` でデプロイ
-
-## LIFE OFFICE（同梱サンプル）
-
-初回同梱の `life-office` には、LIFE OFFICE 向けの文案が入っています。
-
-| ページ | パス |
-|--------|------|
-| サポート | `/life-office/` |
-| プライバシーポリシー | `/life-office/privacy/` |
-| 利用規約 | `/life-office/terms/` |
-
-### アプリ側（legal.ts）への URL 例
-
-デプロイ後、LIFE OFFICE リポジトリの `src/constants/legal.ts` に以下を設定:
-
-```ts
-export const PRIVACY_POLICY_URL =
-  'https://your-github-username.github.io/app-legal/life-office/privacy/';
-export const TERMS_URL =
-  'https://your-github-username.github.io/app-legal/life-office/terms/';
-export const SUPPORT_EMAIL = 'support@example.com';
-```
-
-App Store Connect:
-
-| フィールド | URL |
-|-----------|-----|
-| プライバシーポリシー URL | 上記 privacy URL |
-| サポート URL | `https://your-github-username.github.io/app-legal/life-office/` |
-
-## プロジェクト構成
-
-```
-src/
-├── config/
-│   ├── site.ts              # 運営者・デフォルトメール・GitHub ユーザー名
-│   └── apps/                # アプリ registry（1 アプリ = 1 ファイル）
-├── content/legal/{slug}/    # privacy.md / terms.md
-├── layouts/LegalLayout.astro
-├── lib/legal.ts
-└── pages/
-    ├── index.astro          # アプリ一覧
-    └── [app]/               # support / privacy / terms
-```
 
 ## コマンド
 
 | コマンド | 説明 |
 |----------|------|
 | `npm run dev` | 開発サーバー |
+| `npm run check` | 型/設定チェック |
+| `npm run lint` | 静的チェック |
+| `npm run test` | 現在は `check` を実行 |
 | `npm run build` | 静的サイト生成（`dist/`） |
 | `npm run preview` | ビルド結果のプレビュー |
 | `npm run new-app` | 新アプリ scaffold |
 
+## 環境変数について
+
+現状このテンプレートは `.env` 必須ではありません。  
+必要になった場合は `.env` を使い、秘密情報は絶対にコミットしないでください。
+
+## npm 公開について
+
+`package.json` は `"private": true` のままです。  
+これは npm パッケージとしての誤公開防止であり、GitHub リポジトリ公開とは独立した設定です。
+
 ## ライセンス
 
-Private — 個人利用向けテンプレート
+[MIT](LICENSE)
