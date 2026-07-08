@@ -9,7 +9,6 @@ interface Props {
   app?: AppConfig;
   currentPath?: 'support' | 'privacy' | 'terms';
   updated?: Date;
-  children?: import('astro/types').HTMLAttributes['children'];
 }
 
 const { title, app, currentPath, updated } = Astro.props;
@@ -44,7 +43,7 @@ const formatDate = (date: Date) =>
         updated && (
           <p class="page-meta">
             最終更新日: {formatDate(updated)}
-            {site.operatorName !== '[氏名または屋号]' && <> · 運営者: {site.operatorName}</>}
+            {site.operatorName.trim() && <> · 運営者: {site.operatorName}</>}
           </p>
         )
       }
