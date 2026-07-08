@@ -9,7 +9,7 @@
  *   npm run new-app my-app "My App Name" support@example.com
  */
 
-import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -101,8 +101,8 @@ console.log(`  src/content/legal/${slug}/privacy.md`);
 console.log(`  src/content/legal/${slug}/terms.md`);
 console.log('\nNext steps:');
 console.log('  1. Edit privacy.md and terms.md for your app');
-console.log(`  2. npm run dev  →  http://localhost:4321/app-legal/${slug}/`);
+console.log(`  2. npm run dev  →  http://localhost:4321/${slug}/`);
 console.log('  3. git push to deploy via GitHub Actions');
 console.log('\nApp Store URLs (after deploy):');
-console.log(`  Privacy: https://YOUR_GITHUB_USERNAME.github.io/app-legal/${slug}/privacy/`);
+console.log(`  Privacy: https://YOUR_DOMAIN/${slug}/privacy/`);
 console.log(`  Terms:...`);

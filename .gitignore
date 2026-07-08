@@ -11,6 +11,24 @@ dist/
 .env
 .env.*
 
+# secrets and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.jks
+*.keystore
+
+# local cloud/dev auth state
+.vercel/
+.firebase/
+
+# IDE/editor
+.idea/
+.cursor/
+
 # OS
 .DS_Store
 
