@@ -1,5 +1,5 @@
-import type { AppConfig } from '../types';
-import { defaultTheme } from '../types';
+import type { AppConfig } from '@/apps/types';
+import { defaultTheme } from '@/apps/types';
 
 export const app: AppConfig = {
   slug: 'watcher',
