@@ -1,6 +1,6 @@
 {
   "name": "app-legal",
-  "description": "Astro site template for app privacy policy, terms, and support pages.",
+  "description": "Astro site for per-app landing pages plus privacy, terms, and support.",
   "type": "module",
   "version": "1.0.0",
   "private": true,

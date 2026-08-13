@@ -1,5 +1,5 @@
 import { getCollection } from 'astro:content';
-import type { AppConfig } from '@/config/apps/types';
+import type { AppConfig } from '@/apps/types';
 
 export async function getLegalDoc(appSlug: string, docType: 'privacy' | 'terms') {
   const docs = await getCollection('legal');

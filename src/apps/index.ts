@@ -1,12 +1,16 @@
 import { site } from '@/config/site';
-import type { AppConfig } from '@/config/apps/types';
-import { lifeOffice } from '@/config/apps/life-office';
-import { watcher } from '@/config/apps/watcher';
+import type { AppConfig } from './types';
 
-export type { AppConfig } from '@/config/apps/types';
+export type { AppConfig, AppPageProps, AppTheme } from './types';
+export { defaultTheme } from './types';
 
-/** 登録アプリ一覧 — new-app スクリプトが追記します */
-export const apps: AppConfig[] = [lifeOffice, watcher];
+const modules = import.meta.glob<{ app: AppConfig }>('./*/config.ts', { eager: true });
+
+/** 登録アプリ一覧 — src/apps/<slug>/config.ts を置くと自動で拾います */
+export const apps: AppConfig[] = Object.entries(modules)
+  .filter(([path]) => !path.includes('/_default/'))
+  .map(([, mod]) => mod.app)
+  .sort((a, b) => a.slug.localeCompare(b.slug));
 
 export function getApp(slug: string): AppConfig | undefined {
   return apps.find((app) => app.slug === slug);

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Scaffold a new app: config + privacy/terms markdown.
+ * Scaffold a new app: config, themed landing, and privacy/terms markdown.
  *
  * Usage:
  *   npm run new-app <slug> "<Display Name>" [support-email]
@@ -28,11 +28,16 @@ if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
   process.exit(1);
 }
 
-const configPath = join(root, 'src/config/apps', `${slug}.ts`);
-const contentDir = join(root, 'src/content/legal', slug);
-const indexPath = join(root, 'src/config/apps/index.ts');
+const reserved = new Set(['support', 'privacy', 'terms', 'index']);
+if (reserved.has(slug)) {
+  console.error(`Error: slug "${slug}" is reserved`);
+  process.exit(1);
+}
 
-if (existsSync(configPath) || existsSync(contentDir)) {
+const appDir = join(root, 'src/apps', slug);
+const contentDir = join(root, 'src/content/legal', slug);
+
+if (existsSync(appDir) || existsSync(contentDir)) {
   console.error(`Error: app "${slug}" already exists`);
   process.exit(1);
 }
@@ -40,10 +45,6 @@ if (existsSync(configPath) || existsSync(contentDir)) {
 const supportEmail = supportEmailArg ?? 'support@example.com';
 const tagline = `${name} のサポート・法務ページ`;
 const updatedDate = new Date().toISOString().slice(0, 10);
-const exportName = slug
-  .split('-')
-  .map((part, i) => (i === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)))
-  .join('');
 
 const replacePlaceholders = (text) =>
   text
@@ -51,58 +52,37 @@ const replacePlaceholders = (text) =>
     .replaceAll('__APP_NAME__', name)
     .replaceAll('__APP_TAGLINE__', tagline)
     .replaceAll('__SUPPORT_EMAIL__', supportEmail)
-    .replaceAll('__UPDATED_DATE__', updatedDate)
-    .replaceAll('__EXPORT_NAME__', exportName);
+    .replaceAll('__UPDATED_DATE__', updatedDate);
 
-// App config
-const configTemplate = readFileSync(join(root, 'templates/app/app.config.ts'), 'utf8');
-writeFileSync(configPath, replacePlaceholders(configTemplate));
+mkdirSync(appDir, { recursive: true });
 
-// Markdown
+for (const file of ['config.ts', 'theme.css', 'Landing.astro']) {
+  const template = readFileSync(join(root, 'templates/app', file), 'utf8');
+  writeFileSync(join(appDir, file), replacePlaceholders(template));
+}
+
 mkdirSync(contentDir, { recursive: true });
 for (const file of ['privacy.md', 'terms.md']) {
   const template = readFileSync(join(root, 'templates/app', file), 'utf8');
   writeFileSync(join(contentDir, file), replacePlaceholders(template));
 }
 
-// Update registry index.ts
-let indexSource = readFileSync(indexPath, 'utf8');
-
-const importLine = `import { ${exportName} } from '@/config/apps/${slug}';`;
-if (!indexSource.includes(importLine)) {
-  indexSource = indexSource.replace(
-    "import { lifeOffice } from '@/config/apps/life-office';",
-    `import { lifeOffice } from '@/config/apps/life-office';\n${importLine}`,
-  );
-}
-
-const appsArrayMatch = indexSource.match(/export const apps: AppConfig\[\] = \[([\s\S]*?)\];/);
-if (appsArrayMatch) {
-  const entries = appsArrayMatch[1]
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  if (!entries.includes(exportName)) {
-    entries.push(exportName);
-    indexSource = indexSource.replace(
-      /export const apps: AppConfig\[\] = \[[\s\S]*?\];/,
-      `export const apps: AppConfig[] = [${entries.join(', ')}];`,
-    );
-  }
-}
-
-writeFileSync(indexPath, indexSource);
-
 console.log(`\nCreated app "${name}" (${slug})\n`);
 console.log('Files:');
-console.log(`  src/config/apps/${slug}.ts`);
+console.log(`  src/apps/${slug}/config.ts`);
+console.log(`  src/apps/${slug}/theme.css`);
+console.log(`  src/apps/${slug}/Landing.astro`);
 console.log(`  src/content/legal/${slug}/privacy.md`);
 console.log(`  src/content/legal/${slug}/terms.md`);
 console.log('\nNext steps:');
-console.log('  1. Edit privacy.md and terms.md for your app');
-console.log(`  2. npm run dev  →  http://localhost:4321/${slug}/`);
-console.log('  3. git push to deploy via GitHub Actions');
-console.log('\nApp Store URLs (after deploy):');
+console.log('  1. Edit Landing.astro / theme.css for the app page');
+console.log('  2. Edit privacy.md and terms.md');
+console.log(`  3. npm run dev  →  http://localhost:4321/${slug}/`);
+console.log('  4. git push to deploy via GitHub Actions');
+console.log('\nPublic URLs (after deploy):');
+console.log(`  App:     https://YOUR_DOMAIN/${slug}/`);
+console.log(`  Support: https://YOUR_DOMAIN/${slug}/support/`);
 console.log(`  Privacy: https://YOUR_DOMAIN/${slug}/privacy/`);
-console.log(`  Terms:...`);
+console.log(`  Terms:   https://YOUR_DOMAIN/${slug}/terms/`);
+console.log('\nOptional extra pages:');
+console.log(`  src/apps/${slug}/pages/<name>.astro  →  /${slug}/<name>/`);

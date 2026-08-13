@@ -1,0 +1,34 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { site } from '@/config/site';
+import type { AppPageProps } from '@/apps/types';
+import './theme.css';
+
+interface Props extends AppPageProps {}
+
+const { app } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title={app.name} app={app} description={app.tagline}>
+  <div class="lo-page">
+    <header class="lo-top">
+      <a href={base}>App Legal</a>
+    </header>
+
+    <main class="lo-hero">
+      <p class="lo-kicker">Morning ritual</p>
+      <h1 class="lo-title">{app.name}</h1>
+      <p class="lo-tagline">{app.tagline}</p>
+      <nav class="lo-actions">
+        <a class="primary" href={`${base}${app.slug}/support/`}>サポート</a>
+        <a class="ghost" href={`${base}${app.slug}/privacy/`}>プライバシー</a>
+        <a class="ghost" href={`${base}${app.slug}/terms/`}>利用規約</a>
+      </nav>
+    </main>
+
+    <footer class="lo-foot">
+      <p>&copy; {new Date().getFullYear()} {site.operatorName}</p>
+    </footer>
+  </div>
+</BaseLayout>

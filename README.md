@@ -1,15 +1,21 @@
 # app-legal
 
-App Store 提出用のプライバシーポリシー・利用規約・サポートページを、**アプリ slug ごと**に公開する Astro サイトです。
+アプリごとの専用ページと、App Store 提出用のプライバシーポリシー・利用規約・サポートページを公開する Astro サイトです。
+
+各アプリは `src/apps/<slug>/` にテーマとランディングを持ち、法務ページは共通レイアウトにアプリの色を載せて表示します。
 
 ## 公開URL
 
 現在の設定はカスタムドメイン運用です。
 
 - サイト: `https://legal.testkun.net/`
+- アプリページ: `https://legal.testkun.net/life-office/`
+- サポート: `https://legal.testkun.net/life-office/support/`
 - 例: `https://legal.testkun.net/life-office/privacy/`
 
 > `astro.config.mjs` は `base: '/'` です。サブパス（`/app-legal`）前提ではありません。
+
+> 以前 `/<app>/` がサポートページでした。サポートは `/<app>/support/` に移しています。App Store のサポート URL を更新してください。
 
 ## 前提環境
 
@@ -61,6 +67,21 @@ npm run dev
 
 カスタムドメインを使う場合は [`public/CNAME`](public/CNAME) を実運用のドメインに合わせて設定してください。
 
+## 構成
+
+```
+src/apps/<slug>/
+  config.ts          # 名前・テーマ（色）
+  theme.css          # 専用ページ向けの追加スタイル
+  Landing.astro      # /<slug>/ の専用ページ（レイアウト自由）
+  pages/*.astro      # 任意: /<slug>/<name>/ の追加ページ
+src/content/legal/<slug>/
+  privacy.md
+  terms.md
+```
+
+法務ページ（`/privacy/` `/terms/` `/support/`）は共通の `LegalLayout` を使い、`config.ts` のテーマを CSS 変数として適用します。専用ページは `BaseLayout` だけ借りて、見た目はアプリごとに自由です。
+
 ## 新しいアプリを追加
 
 ```bash
@@ -75,17 +96,22 @@ npm run new-app my-app "My App Name" support@example.com
 
 生成されるファイル:
 
-- `src/config/apps/<slug>.ts`
+- `src/apps/<slug>/config.ts`
+- `src/apps/<slug>/theme.css`
+- `src/apps/<slug>/Landing.astro`
 - `src/content/legal/<slug>/privacy.md`
 - `src/content/legal/<slug>/terms.md`
 
-`src/config/apps/index.ts` の registry 追記も自動で行われます。
+`src/apps/<slug>/config.ts` を置くと registry に自動登録されます。
 
 追加後の作業:
 
-1. `privacy.md` / `terms.md` を編集
-2. `npm run dev` で表示確認
-3. `git push` でデプロイ
+1. `Landing.astro` と `theme.css` で専用ページを調整
+2. `privacy.md` / `terms.md` を編集
+3. `npm run dev` で表示確認
+4. `git push` でデプロイ
+
+追加の専用ページは `src/apps/<slug>/pages/<name>.astro` を置くと `/<slug>/<name>/` になります（`support` / `privacy` / `terms` は予約済み）。
 
 ## コマンド
 

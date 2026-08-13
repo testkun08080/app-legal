@@ -1,0 +1,18 @@
+---
+import { extraPagePaths } from '@/lib/app-pages';
+import type { AppConfig } from '@/apps/types';
+
+interface Props {
+  app: AppConfig;
+  loader: () => Promise<{ default: (props: { app: AppConfig }) => unknown }>;
+}
+
+export function getStaticPaths() {
+  return extraPagePaths();
+}
+
+const { app, loader } = Astro.props;
+const Page = (await loader()).default;
+---
+
+<Page app={app} />
