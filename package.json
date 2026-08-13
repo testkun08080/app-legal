@@ -1,6 +1,6 @@
 {
   "name": "app-legal",
-  "description": "Astro site template for app privacy policy, terms, and support pages.",
+  "description": "Astro site for per-app landing pages plus privacy, terms, and support.",
   "type": "module",
   "version": "1.0.0",
   "private": true,
@@ -15,7 +15,7 @@
     "new-app": "node scripts/new-app.mjs"
   },
   "dependencies": {
-    "astro": "^7.0.6"
+    "astro": "^7.2.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.0",

@@ -1,0 +1,43 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { site } from '@/config/site';
+import type { AppPageProps } from '@/apps/types';
+import './theme.css';
+
+interface Props extends AppPageProps {}
+
+const { app } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title={app.name} app={app} description={app.tagline}>
+  <div class="wt-page">
+    <header class="wt-bar">
+      <a href={base}>App Legal</a>
+      <span>STATUS / OK</span>
+    </header>
+
+    <main class="wt-main">
+      <section class="wt-panel">
+        <p class="wt-label">Application</p>
+        <h1 class="wt-title">{app.name}</h1>
+        <p class="wt-tagline">{app.tagline}</p>
+        <nav class="wt-links">
+          <a href={`${base}${app.slug}/support/`}>
+            サポート <span>support</span>
+          </a>
+          <a href={`${base}${app.slug}/privacy/`}>
+            プライバシーポリシー <span>privacy</span>
+          </a>
+          <a href={`${base}${app.slug}/terms/`}>
+            利用規約 <span>terms</span>
+          </a>
+        </nav>
+      </section>
+    </main>
+
+    <footer class="wt-foot">
+      <p>&copy; {new Date().getFullYear()} {site.operatorName}</p>
+    </footer>
+  </div>
+</BaseLayout>

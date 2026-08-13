@@ -1,0 +1,86 @@
+.lo-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.lo-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 1.25rem 1.5rem;
+}
+
+.lo-top a {
+  color: inherit;
+  text-decoration: none;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.lo-hero {
+  flex: 1;
+  display: grid;
+  align-content: center;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+}
+
+.lo-kicker {
+  margin: 0 0 1rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.lo-title {
+  margin: 0 0 1rem;
+  font-size: clamp(2.5rem, 8vw, 4.25rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.lo-tagline {
+  margin: 0 0 2.25rem;
+  font-size: 1.25rem;
+  color: var(--color-muted);
+  max-width: 22rem;
+}
+
+.lo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.lo-actions a {
+  display: inline-block;
+  padding: 0.7rem 1.15rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.lo-actions a.primary {
+  background: var(--color-accent);
+  color: #fffaf3;
+}
+
+.lo-actions a.ghost {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.lo-foot {
+  padding: 1.25rem 1.5rem 1.75rem;
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+}

@@ -1,0 +1,28 @@
+---
+import '@/styles/reset.css';
+import type { AppConfig } from '@/apps/types';
+import { themeToStyle } from '@/lib/theme';
+
+interface Props {
+  title: string;
+  app?: AppConfig;
+  description?: string;
+}
+
+const { title, app, description } = Astro.props;
+const pageTitle = app && title !== app.name ? `${title} — ${app.name}` : title;
+const pageDescription = description ?? (app ? `${app.name} — ${title}` : title);
+---
+
+<!doctype html>
+<html lang="ja" data-app={app?.slug} style={app ? themeToStyle(app.theme) : undefined}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={pageDescription} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
