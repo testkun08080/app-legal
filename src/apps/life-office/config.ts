@@ -6,7 +6,10 @@ import type { AppConfig } from '@/apps/types';
 export const app: AppConfig = {
   slug: 'life-office',
   name: 'LIFE OFFICE',
-  tagline: '毎朝の出勤儀式を、スマホで。',
+  tagline: {
+    ja: '毎朝の出勤儀式を、スマホで。',
+    en: 'Your morning clock-in ritual, on your phone.',
+  },
   supportEmail: 'support@legal.testkun.net',
   appStoreUrl: 'https://apps.apple.com/jp/app/id6773638323',
   theme: {
