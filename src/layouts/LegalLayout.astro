@@ -18,27 +18,22 @@ const base = import.meta.env.BASE_URL;
 
 const formatDate = (date: Date) =>
   date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const navItems = app
+  ? ([
+      { key: 'support', label: 'サポート', href: `${base}${app.slug}/support/` },
+      { key: 'privacy', label: 'プライバシーポリシー', href: `${base}${app.slug}/privacy/` },
+      { key: 'terms', label: '利用規約', href: `${base}${app.slug}/terms/` },
+    ] as const)
+  : [];
 ---
 
 <BaseLayout title={title} app={app}>
   <header class="site-header">
     <div class="site-header__inner">
-      {
-        app ? (
-          <>
-            <p class="site-header__hub">
-              <a href={base}>App Legal</a>
-            </p>
-            <p class="site-header__title">
-              <a href={`${base}${app.slug}/`}>{app.name}</a>
-            </p>
-          </>
-        ) : (
-          <p class="site-header__title">
-            <a href={base}>App Legal</a>
-          </p>
-        )
-      }
+      <p class="site-header__title">
+        <a href={app ? `${base}${app.slug}/` : base}>{app ? app.name : 'アプリ一覧'}</a>
+      </p>
     </div>
   </header>
 
@@ -55,33 +50,14 @@ const formatDate = (date: Date) =>
     }
 
     {
-      app && (
-        <ul class="nav-links">
-          <li>
-            <a
-              href={`${base}${app.slug}/support/`}
-              aria-current={currentPath === 'support' ? 'page' : undefined}
-            >
-              サポート
+      navItems.length > 0 && (
+        <nav class="nav-links" aria-label="法務ページ">
+          {navItems.map((item) => (
+            <a href={item.href} aria-current={currentPath === item.key ? 'page' : undefined}>
+              {item.label}
             </a>
-          </li>
-          <li>
-            <a
-              href={`${base}${app.slug}/privacy/`}
-              aria-current={currentPath === 'privacy' ? 'page' : undefined}
-            >
-              プライバシーポリシー
-            </a>
-          </li>
-          <li>
-            <a
-              href={`${base}${app.slug}/terms/`}
-              aria-current={currentPath === 'terms' ? 'page' : undefined}
-            >
-              利用規約
-            </a>
-          </li>
-        </ul>
+          ))}
+        </nav>
       )
     }
 
@@ -101,6 +77,9 @@ const formatDate = (date: Date) =>
   </main>
 
   <footer class="site-footer">
-    <p>&copy; {new Date().getFullYear()} {site.operatorName}</p>
+    <p>
+      &copy; {new Date().getFullYear()} {site.operatorName}
+      {app && <> · <a href={base}>アプリ一覧</a></>}
+    </p>
   </footer>
 </BaseLayout>
