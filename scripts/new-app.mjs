@@ -28,16 +28,16 @@ if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
   process.exit(1);
 }
 
-const reserved = new Set(['support', 'privacy', 'terms', 'index']);
+const reserved = new Set(['support', 'privacy', 'terms', 'index', 'ja', 'en']);
 if (reserved.has(slug)) {
   console.error(`Error: slug "${slug}" is reserved`);
   process.exit(1);
 }
 
 const appDir = join(root, 'src/apps', slug);
-const contentDir = join(root, 'src/content/legal', slug);
+const contentDir = join(root, 'src/content/legal', slug, 'ja');
 
-if (existsSync(appDir) || existsSync(contentDir)) {
+if (existsSync(appDir) || existsSync(join(root, 'src/content/legal', slug))) {
   console.error(`Error: app "${slug}" already exists`);
   process.exit(1);
 }
@@ -72,8 +72,8 @@ console.log('Files:');
 console.log(`  src/apps/${slug}/config.ts`);
 console.log(`  src/apps/${slug}/theme.css`);
 console.log(`  src/apps/${slug}/Landing.astro`);
-console.log(`  src/content/legal/${slug}/privacy.md`);
-console.log(`  src/content/legal/${slug}/terms.md`);
+console.log(`  src/content/legal/${slug}/ja/privacy.md`);
+console.log(`  src/content/legal/${slug}/ja/terms.md`);
 console.log('\nNext steps:');
 console.log('  1. Edit Landing.astro / theme.css for the app page');
 console.log('  2. Edit privacy.md and terms.md');
@@ -84,5 +84,9 @@ console.log(`  App:     https://YOUR_DOMAIN/${slug}/`);
 console.log(`  Support: https://YOUR_DOMAIN/${slug}/support/`);
 console.log(`  Privacy: https://YOUR_DOMAIN/${slug}/privacy/`);
 console.log(`  Terms:   https://YOUR_DOMAIN/${slug}/terms/`);
+console.log('\nEnglish URLs (when UI translations are used):');
+console.log(`  App:     https://YOUR_DOMAIN/en/${slug}/`);
 console.log('\nOptional extra pages:');
 console.log(`  src/apps/${slug}/pages/<name>.astro  →  /${slug}/<name>/`);
+console.log('\nOptional localized landing:');
+console.log(`  src/apps/${slug}/Landing.en.astro  →  English landing page`);

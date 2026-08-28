@@ -1,16 +1,17 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 import { site } from '@/config/site';
+import { defaultLocale } from '@/config/i18n';
+import { localizePath, t } from '@/i18n';
 import type { AppPageProps } from '@/apps/types';
-import './theme.css';
 
 interface Props extends AppPageProps {}
 
-const { app } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const { app, locale = defaultLocale } = Astro.props;
 ---
 
-<BaseLayout title={app.name} app={app} description={app.tagline}>
+<BaseLayout title={app.name} app={app} locale={locale} description={app.tagline}>
   <div class="wt-page">
     <header class="wt-bar">
       <span>{app.name}</span>
@@ -23,20 +24,21 @@ const base = import.meta.env.BASE_URL;
         <h1 class="wt-title">{app.name}</h1>
         <p class="wt-tagline">{app.tagline}</p>
         <nav class="wt-links">
-          <a href={`${base}${app.slug}/support/`}>
-            サポート <span>support</span>
+          <a href={localizePath(`${app.slug}/support/`, locale)}>
+            {t(locale, 'nav.support')} <span>support</span>
           </a>
-          <a href={`${base}${app.slug}/privacy/`}>
-            プライバシーポリシー <span>privacy</span>
+          <a href={localizePath(`${app.slug}/privacy/`, locale)}>
+            {t(locale, 'nav.privacy')} <span>privacy</span>
           </a>
-          <a href={`${base}${app.slug}/terms/`}>
-            利用規約 <span>terms</span>
+          <a href={localizePath(`${app.slug}/terms/`, locale)}>
+            {t(locale, 'nav.terms')} <span>terms</span>
           </a>
         </nav>
       </section>
     </main>
 
     <footer class="wt-foot">
+      <LanguageSwitcher locale={locale} />
       <p>&copy; {new Date().getFullYear()} {site.operatorName}</p>
     </footer>
   </div>

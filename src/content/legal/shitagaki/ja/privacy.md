@@ -2,6 +2,7 @@
 title: プライバシーポリシー
 appSlug: shitagaki
 docType: privacy
+locale: ja
 updated: 2026-08-13
 ---
 

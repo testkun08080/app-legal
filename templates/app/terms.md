@@ -2,6 +2,7 @@
 title: 利用規約
 appSlug: __APP_SLUG__
 docType: terms
+locale: ja
 updated: __UPDATED_DATE__
 ---
 

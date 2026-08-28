@@ -1,14 +1,13 @@
 ---
 import { apps } from '@/apps';
 import { appPaths } from '@/lib/legal';
-import { resolveLanding } from '@/lib/app-pages';
+import AppLandingPage from '@/components/pages/AppLandingPage.astro';
 
 export function getStaticPaths() {
-  return appPaths(apps);
+  return appPaths(apps, 'ja');
 }
 
-const { app } = Astro.props;
-const Landing = await resolveLanding(app.slug);
+const { app, locale } = Astro.props;
 ---
 
-<Landing app={app} />
+<AppLandingPage app={app} locale={locale} />

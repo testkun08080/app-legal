@@ -1,0 +1,33 @@
+---
+import LegalLayout from '@/layouts/LegalLayout.astro';
+import { getLegalDoc } from '@/lib/legal';
+import { localizedApp, type Locale } from '@/i18n';
+import type { AppConfig } from '@/apps/types';
+import { render } from 'astro:content';
+
+interface Props {
+  app: AppConfig;
+  locale: Locale;
+}
+
+const { app: rawApp, locale } = Astro.props;
+const app = localizedApp(rawApp, locale);
+const doc = await getLegalDoc(rawApp.slug, 'privacy', locale);
+
+if (!doc) {
+  throw new Error(`Missing privacy document for app: ${rawApp.slug}`);
+}
+
+const { Content } = await render(doc);
+---
+
+<LegalLayout
+  title={doc.data.title}
+  app={app}
+  rawApp={rawApp}
+  currentPath="privacy"
+  updated={doc.data.updated}
+  locale={locale}
+>
+  <Content />
+</LegalLayout>

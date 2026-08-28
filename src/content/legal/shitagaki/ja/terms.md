@@ -2,6 +2,7 @@
 title: 利用規約
 appSlug: shitagaki
 docType: terms
+locale: ja
 updated: 2026-08-13
 ---
 

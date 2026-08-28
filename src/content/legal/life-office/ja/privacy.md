@@ -2,6 +2,7 @@
 title: プライバシーポリシー
 appSlug: life-office
 docType: privacy
+locale: ja
 updated: 2026-08-28
 ---
 

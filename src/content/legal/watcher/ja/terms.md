@@ -2,6 +2,7 @@
 title: 利用規約
 appSlug: watcher
 docType: terms
+locale: ja
 updated: 2026-07-08
 ---
 

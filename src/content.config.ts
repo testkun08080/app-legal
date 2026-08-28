@@ -8,6 +8,7 @@ const legal = defineCollection({
     title: z.string(),
     appSlug: z.string(),
     docType: z.enum(['privacy', 'terms']),
+    locale: z.enum(['ja', 'en']).default('ja'),
     updated: z.coerce.date(),
   }),
 });

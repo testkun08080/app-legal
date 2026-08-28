@@ -1,28 +1,30 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 import { site } from '@/config/site';
+import { defaultLocale } from '@/config/i18n';
+import { localizePath, t } from '@/i18n';
 import type { AppPageProps } from '@/apps/types';
-import './theme.css';
 
 interface Props extends AppPageProps {}
 
-const { app } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const { app, locale = defaultLocale } = Astro.props;
 ---
 
-<BaseLayout title={app.name} app={app} description={app.tagline}>
+<BaseLayout title={app.name} app={app} locale={locale} description={app.tagline}>
   <div class="app-landing">
     <main class="app-landing__main">
       <h1 class="app-landing__name">{app.name}</h1>
       <p class="app-landing__tagline">{app.tagline}</p>
       <nav class="app-landing__links">
-        <a href={`${base}${app.slug}/support/`}>サポート</a>
-        <a href={`${base}${app.slug}/privacy/`}>プライバシーポリシー</a>
-        <a href={`${base}${app.slug}/terms/`}>利用規約</a>
+        <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
+        <a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>
+        <a href={localizePath(`${app.slug}/terms/`, locale)}>{t(locale, 'nav.terms')}</a>
       </nav>
     </main>
 
     <footer class="app-landing__footer">
+      <LanguageSwitcher locale={locale} />
       <p>&copy; {new Date().getFullYear()} {site.operatorName}</p>
     </footer>
   </div>
