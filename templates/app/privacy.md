@@ -2,6 +2,7 @@
 title: プライバシーポリシー
 appSlug: __APP_SLUG__
 docType: privacy
+locale: ja
 updated: __UPDATED_DATE__
 ---
 

@@ -1,0 +1,37 @@
+---
+import LegalLayout from '@/layouts/LegalLayout.astro';
+import { getSupportEmail } from '@/apps';
+import { localizedApp, localizePath, t, type Locale } from '@/i18n';
+import type { AppConfig } from '@/apps/types';
+
+interface Props {
+  app: AppConfig;
+  locale: Locale;
+}
+
+const { app: rawApp, locale } = Astro.props;
+const app = localizedApp(rawApp, locale);
+const supportEmail = getSupportEmail(rawApp);
+---
+
+<LegalLayout title={t(locale, 'support.title')} app={app} rawApp={rawApp} currentPath="support" locale={locale}>
+  <p>{app.tagline}</p>
+
+  <p>{t(locale, 'support.contactIntro', app.name)}</p>
+
+  <div class="contact-block">
+    <p>
+      <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+    </p>
+  </div>
+
+  <h2>{t(locale, 'support.legalDocs')}</h2>
+  <ul>
+    <li>
+      <a href={localizePath(`${rawApp.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>
+    </li>
+    <li>
+      <a href={localizePath(`${rawApp.slug}/terms/`, locale)}>{t(locale, 'nav.terms')}</a>
+    </li>
+  </ul>
+</LegalLayout>

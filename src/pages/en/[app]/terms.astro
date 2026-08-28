@@ -4,7 +4,7 @@ import { appPaths } from '@/lib/legal';
 import AppTermsPage from '@/components/pages/AppTermsPage.astro';
 
 export function getStaticPaths() {
-  return appPaths(apps, 'ja');
+  return appPaths(apps, 'en');
 }
 
 const { app, locale } = Astro.props;

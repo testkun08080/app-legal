@@ -1,0 +1,16 @@
+---
+import { localizedApp, type Locale } from '@/i18n';
+import type { AppConfig } from '@/apps/types';
+import { resolveLanding } from '@/lib/app-pages';
+
+interface Props {
+  app: AppConfig;
+  locale: Locale;
+}
+
+const { app: rawApp, locale } = Astro.props;
+const app = localizedApp(rawApp, locale);
+const Landing = await resolveLanding(rawApp.slug, locale);
+---
+
+<Landing app={app} locale={locale} />

@@ -1,13 +1,13 @@
 ---
 import { apps } from '@/apps';
 import { appPaths } from '@/lib/legal';
-import AppTermsPage from '@/components/pages/AppTermsPage.astro';
+import AppLandingPage from '@/components/pages/AppLandingPage.astro';
 
 export function getStaticPaths() {
-  return appPaths(apps, 'ja');
+  return appPaths(apps, 'en');
 }
 
 const { app, locale } = Astro.props;
 ---
 
-<AppTermsPage app={app} locale={locale} />
+<AppLandingPage app={app} locale={locale} />

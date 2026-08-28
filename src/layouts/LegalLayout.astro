@@ -1,38 +1,54 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 import '@/styles/legal.css';
 import { site } from '@/config/site';
-import type { AppConfig } from '@/apps/types';
+import type { AppConfig, ResolvedAppConfig } from '@/apps/types';
 import { getSupportEmail } from '@/apps';
+import { defaultLocale, type Locale } from '@/config/i18n';
+import { formatDate, localizePath, t } from '@/i18n';
 
 interface Props {
   title: string;
-  app?: AppConfig;
+  app?: ResolvedAppConfig;
+  rawApp?: AppConfig;
   currentPath?: 'support' | 'privacy' | 'terms';
   updated?: Date;
+  locale?: Locale;
 }
 
-const { title, app, currentPath, updated } = Astro.props;
-const supportEmail = app ? getSupportEmail(app) : site.defaultSupportEmail;
-const base = import.meta.env.BASE_URL;
+const { title, app, rawApp, currentPath, updated, locale = defaultLocale } = Astro.props;
+const appForLinks = rawApp ?? app;
+const supportEmail = appForLinks ? getSupportEmail(appForLinks) : site.defaultSupportEmail;
 
-const formatDate = (date: Date) =>
-  date.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
-
-const navItems = app
+const navItems = appForLinks
   ? ([
-      { key: 'support', label: 'サポート', href: `${base}${app.slug}/support/` },
-      { key: 'privacy', label: 'プライバシーポリシー', href: `${base}${app.slug}/privacy/` },
-      { key: 'terms', label: '利用規約', href: `${base}${app.slug}/terms/` },
+      {
+        key: 'support',
+        label: t(locale, 'nav.support'),
+        href: localizePath(`${appForLinks.slug}/support/`, locale),
+      },
+      {
+        key: 'privacy',
+        label: t(locale, 'nav.privacy'),
+        href: localizePath(`${appForLinks.slug}/privacy/`, locale),
+      },
+      {
+        key: 'terms',
+        label: t(locale, 'nav.terms'),
+        href: localizePath(`${appForLinks.slug}/terms/`, locale),
+      },
     ] as const)
   : [];
 ---
 
-<BaseLayout title={title} app={app}>
+<BaseLayout title={title} app={appForLinks} locale={locale}>
   <header class="site-header">
     <div class="site-header__inner">
       <p class="site-header__title">
-        <a href={app ? `${base}${app.slug}/` : base}>{app ? app.name : 'アプリ一覧'}</a>
+        <a href={appForLinks ? localizePath(`${appForLinks.slug}/`, locale) : localizePath('', locale)}>
+          {app ? app.name : t(locale, 'hub.title')}
+        </a>
       </p>
     </div>
   </header>
@@ -43,15 +59,15 @@ const navItems = app
     {
       updated && (
         <p class="page-meta">
-          最終更新日: {formatDate(updated)}
-          {site.operatorName.trim() && <> · 運営者: {site.operatorName}</>}
+          {t(locale, 'meta.lastUpdated')}: {formatDate(updated, locale)}
+          {site.operatorName.trim() && <> · {t(locale, 'meta.operator')}: {site.operatorName}</>}
         </p>
       )
     }
 
     {
       navItems.length > 0 && (
-        <nav class="nav-links" aria-label="法務ページ">
+        <nav class="nav-links" aria-label={t(locale, 'aria.legalNav')}>
           {navItems.map((item) => (
             <a href={item.href} aria-current={currentPath === item.key ? 'page' : undefined}>
               {item.label}
@@ -69,7 +85,7 @@ const navItems = app
       app && currentPath !== 'support' && (
         <div class="contact-block">
           <p>
-            お問い合わせ: <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+            {t(locale, 'meta.contact')}: <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
           </p>
         </div>
       )
@@ -77,9 +93,15 @@ const navItems = app
   </main>
 
   <footer class="site-footer">
+    <LanguageSwitcher locale={locale} />
     <p>
       &copy; {new Date().getFullYear()} {site.operatorName}
-      {app && <> · <a href={base}>アプリ一覧</a></>}
+      {appForLinks && (
+        <>
+          {' '}
+          · <a href={localizePath('', locale)}>{t(locale, 'footer.appList')}</a>
+        </>
+      )}
     </p>
   </footer>
 </BaseLayout>

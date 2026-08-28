@@ -1,8 +1,11 @@
 ---
 import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 import { site } from '@/config/site';
 import { getSupportEmail } from '@/apps';
+import { defaultLocale } from '@/config/i18n';
+import { localizePath, t } from '@/i18n';
 import type { AppPageProps } from '@/apps/types';
 import DeviceFrame from './components/DeviceFrame.astro';
 import Icon from './components/Icon.astro';
@@ -20,8 +23,7 @@ import shotWidget from '@/assets/life-office/widget.png';
 
 interface Props extends AppPageProps {}
 
-const { app } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const { app, locale = defaultLocale } = Astro.props;
 const supportEmail = getSupportEmail(app);
 const year = new Date().getFullYear();
 
@@ -135,6 +137,7 @@ const privacyPoints = [
 <BaseLayout
   title={app.name}
   app={app}
+  locale={locale}
   description="怠惰な自分に、毎朝ひとつの儀式を。LIFE OFFICE は昔のタイムカードの「カチッ」をスマホで再現する、あなただけの出勤スイッチです。"
   ogImage={icon.src}
 >
@@ -175,7 +178,7 @@ const privacyPoints = [
                 </a>
               )
             }
-            <a class="lo-btn lo-btn--link" href={`${base}${app.slug}/support/`}>
+            <a class="lo-btn lo-btn--link" href={localizePath(`${app.slug}/support/`, locale)}>
               サポート
               <Icon name="chevron" />
             </a>
@@ -356,7 +359,7 @@ const privacyPoints = [
         </ul>
 
         <p class="lo-note">
-          詳しくは<a href={`${base}${app.slug}/privacy/`}>プライバシーポリシー</a>をご覧ください。
+          詳しくは<a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>をご覧ください。
         </p>
       </div>
     </section>
@@ -386,12 +389,13 @@ const privacyPoints = [
     <div class="lo-footer__inner">
       <p class="lo-footer__brand">{app.name}</p>
       <nav class="lo-footer__links" aria-label="フッター">
-        <a href={base}>ホーム</a>
-        <a href={`${base}${app.slug}/support/`}>サポート</a>
-        <a href={`${base}${app.slug}/privacy/`}>プライバシーポリシー</a>
-        <a href={`${base}${app.slug}/terms/`}>利用規約</a>
+        <a href={localizePath('', locale)}>ホーム</a>
+        <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
+        <a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>
+        <a href={localizePath(`${app.slug}/terms/`, locale)}>{t(locale, 'nav.terms')}</a>
         <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
       </nav>
+      <LanguageSwitcher locale={locale} />
       <p class="lo-footer__meta">&copy; {year} {site.operatorName}</p>
     </div>
   </footer>

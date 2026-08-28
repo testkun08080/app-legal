@@ -1,3 +1,8 @@
+import type { Locale } from '@/config/i18n';
+import type { LocalizedString } from '@/i18n';
+
+export type { LocalizedString };
+
 export type AppTheme = {
   bg: string;
   surface: string;
@@ -12,8 +17,8 @@ export type AppTheme = {
 
 export type AppConfig = {
   slug: string;
-  name: string;
-  tagline: string;
+  name: LocalizedString;
+  tagline: LocalizedString;
   /** 未指定時は site.defaultSupportEmail を使用 */
   supportEmail?: string;
   theme: AppTheme;
@@ -23,8 +28,14 @@ export type AppConfig = {
   appStoreUrl?: string;
 };
 
+export type ResolvedAppConfig = Omit<AppConfig, 'name' | 'tagline'> & {
+  name: string;
+  tagline: string;
+};
+
 export type AppPageProps = {
-  app: AppConfig;
+  app: ResolvedAppConfig;
+  locale?: Locale;
 };
 
 /** ハブ・未設定アプリ向けのデフォルトトークン（現行 legal デザイン） */

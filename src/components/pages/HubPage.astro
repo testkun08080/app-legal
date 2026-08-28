@@ -1,0 +1,35 @@
+---
+import LegalLayout from '@/layouts/LegalLayout.astro';
+import { apps } from '@/apps';
+import { localizedApp, localizePath, t, type Locale } from '@/i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const localizedApps = apps.map((app) => localizedApp(app, locale));
+---
+
+<LegalLayout title={t(locale, 'hub.title')} locale={locale}>
+  <p>{t(locale, 'hub.description')}</p>
+
+  <ul class="app-grid">
+    {
+      localizedApps.map((app) => (
+        <li class="app-card" style={`border-top: 3px solid ${app.theme.accent}`}>
+          <h2>
+            <a href={localizePath(`${app.slug}/`, locale)}>{app.name}</a>
+          </h2>
+          <p>{app.tagline}</p>
+          <div class="app-card__links">
+            <a href={localizePath(`${app.slug}/`, locale)}>{t(locale, 'hub.appPage')}</a>
+            <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
+            <a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>
+            <a href={localizePath(`${app.slug}/terms/`, locale)}>{t(locale, 'nav.terms')}</a>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</LegalLayout>

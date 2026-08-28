@@ -74,13 +74,50 @@ src/apps/<slug>/
   config.ts          # 名前・テーマ（色）
   theme.css          # 専用ページ向けの追加スタイル
   Landing.astro      # /<slug>/ の専用ページ（レイアウト自由）
+  Landing.en.astro   # 任意: 英語版ランディング
   pages/*.astro      # 任意: /<slug>/<name>/ の追加ページ
 src/content/legal/<slug>/
-  privacy.md
-  terms.md
+  ja/privacy.md
+  ja/terms.md
+  en/privacy.md      # 任意: 英語版（未作成時は ja にフォールバック）
+  en/terms.md
 ```
 
 法務ページ（`/privacy/` `/terms/` `/support/`）は共通の `LegalLayout` を使い、`config.ts` のテーマを CSS 変数として適用します。専用ページは `BaseLayout` だけ借りて、見た目はアプリごとに自由です。
+
+## 多言語対応
+
+デフォルト言語は **日本語** です。既存 URL（`/<slug>/` など）はそのまま日本語向けとして維持されます。
+
+| 言語 | URL 例 |
+|------|--------|
+| 日本語（デフォルト） | `/`, `/life-office/privacy/` |
+| 英語 | `/en/`, `/en/life-office/privacy/` |
+
+設定は [`src/config/i18n.ts`](src/config/i18n.ts) に集約されています。共通 UI 文字列は [`src/i18n/ui.ts`](src/i18n/ui.ts) にあります。
+
+### 新しい言語を追加する
+
+1. [`src/config/i18n.ts`](src/config/i18n.ts) の `locales` に言語コードを追加
+2. [`astro.config.mjs`](astro.config.mjs) の `i18n.locales` を同期
+3. [`src/i18n/ui.ts`](src/i18n/ui.ts) に UI 翻訳を追加
+4. `src/pages/<locale>/` にルートを追加（`en/` を参考）
+5. 法務文書は `src/content/legal/<slug>/<locale>/` に markdown を配置
+
+翻訳が未整備のページは **日本語へフォールバック** します（404 にはしません）。
+
+### アプリ名・タグラインの多言語化
+
+[`src/apps/types.ts`](src/apps/types.ts) の `name` / `tagline` は文字列または locale 別オブジェクトを指定できます。
+
+```ts
+export const app = {
+  slug: 'my-app',
+  name: { ja: 'マイアプリ', en: 'My App' },
+  tagline: { ja: '説明文', en: 'Description' },
+  // ...
+};
+```
 
 ## 新しいアプリを追加
 
@@ -99,8 +136,8 @@ npm run new-app my-app "My App Name" support@example.com
 - `src/apps/<slug>/config.ts`
 - `src/apps/<slug>/theme.css`
 - `src/apps/<slug>/Landing.astro`
-- `src/content/legal/<slug>/privacy.md`
-- `src/content/legal/<slug>/terms.md`
+- `src/content/legal/<slug>/ja/privacy.md`
+- `src/content/legal/<slug>/ja/terms.md`
 
 `src/apps/<slug>/config.ts` を置くと registry に自動登録されます。
 

@@ -1,4 +1,6 @@
 import { site } from '@/config/site';
+import { defaultLocale, type Locale } from '@/config/i18n';
+import { localizePath } from '@/i18n';
 import type { AppConfig } from './types';
 
 export type { AppConfig, AppPageProps, AppTheme } from './types';
@@ -24,8 +26,9 @@ export function getSiteBaseUrl(): string {
   return site.publicBaseUrl;
 }
 
-export function getAppUrl(slug: string, path?: string): string {
+export function getAppUrl(slug: string, path?: string, locale: Locale = defaultLocale): string {
   const base = getSiteBaseUrl();
   const segment = path ? `/${path.replace(/^\//, '')}` : '';
-  return `${base}/${slug}${segment}`;
+  const localized = localizePath(`${slug}${segment}`, locale);
+  return new URL(localized, base.endsWith('/') ? base : `${base}/`).href;
 }

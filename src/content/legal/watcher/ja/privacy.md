@@ -2,6 +2,7 @@
 title: プライバシーポリシー
 appSlug: watcher
 docType: privacy
+locale: ja
 updated: 2026-07-08
 ---
 
