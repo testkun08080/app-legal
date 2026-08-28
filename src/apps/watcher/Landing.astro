@@ -1,45 +1,499 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 import { site } from '@/config/site';
+import { getSupportEmail } from '@/apps';
 import { defaultLocale } from '@/config/i18n';
 import { localizePath, t } from '@/i18n';
 import type { AppPageProps } from '@/apps/types';
+import Icon from './components/Icon.astro';
+import './theme.css';
+
+/**
+ * アイコンは watcher リポジトリの `watcher-app/assets/images/app-icon-mark.png` を、
+ * iOS アイコン定義（`watcher-app/assets/watcher.icon/icon.json`）と同じ
+ * 淡いグラデーション背景・スケール 0.6 で合成したものです。
+ */
+import icon from '@/assets/watcher/icon.png';
 
 interface Props extends AppPageProps {}
 
 const { app, locale = defaultLocale } = Astro.props;
+const supportEmail = getSupportEmail(app);
+const year = new Date().getFullYear();
+
+const themes = [
+  '気になる企業の最新ニュース',
+  '競合プロダクトのアップデート',
+  '業界の技術トレンド',
+  '関心のある分野の論文・リサーチ',
+  '推しの発表・イベント情報',
+  '旅行先の話題',
+];
+
+const steps = [
+  {
+    title: 'テーマを書く',
+    body: '「何が気になりますか？」に自然な日本語で答えるだけ。かしこまった検索キーワードは要りません。',
+  },
+  {
+    title: 'AI が観点を整理',
+    body: '監視対象と知りたい内容を AI が読み取って提案します。不要な観点は外し、除きたい話題も指定できます。',
+  },
+  {
+    title: 'まとめが届く',
+    body: '頻度と詳しさを決めたら、あとはおまかせ。要点と出典を整理したレポートが自動で届きます。',
+  },
+];
+
+const features = [
+  {
+    icon: 'eye',
+    title: 'ウォッチの登録・管理',
+    body: '気になるテーマをウォッチとして登録。あとから編集も一時停止もできます。',
+  },
+  {
+    icon: 'sparkle',
+    title: 'AI が観点を提案',
+    body: '入力したテーマから、監視対象と知りたい内容を AI が整理して提案します。',
+  },
+  {
+    icon: 'schedule',
+    title: 'スケジュール実行',
+    body: '毎日 / 毎週 / 毎月 / 一度きり。受け取りたいタイミングに合わせて調査します。',
+  },
+  {
+    icon: 'bolt',
+    title: '今すぐ調べる',
+    body: 'スケジュールを待たずに、その場で調査を走らせることもできます。',
+  },
+  {
+    icon: 'report',
+    title: '要点と出典のレポート',
+    body: '調べた内容を要約し、根拠となる出典へのリンクを添えてまとめます。',
+  },
+  {
+    icon: 'bell',
+    title: 'プッシュ通知',
+    body: '新しいレポートが届いたタイミングでお知らせします。',
+  },
+  {
+    icon: 'inbox',
+    title: '受信箱',
+    body: '届いたまとめを一覧で確認。未読とブックマークで読み分けられます。',
+  },
+  {
+    icon: 'search',
+    title: '検索・並び替え・絞り込み',
+    body: 'キーワード検索に加えて、期間・ウォッチ・情報源で絞り込めます。',
+  },
+  {
+    icon: 'tag',
+    title: 'カテゴリ整理',
+    body: '自分で決めたカテゴリでウォッチを分類できます（Standard / Pro）。',
+  },
+  {
+    icon: 'sync',
+    title: '端末内保存とクラウド同期',
+    body: '一度届いたレポートは端末に保存され、オフラインでも読み返せます。',
+  },
+  {
+    icon: 'export',
+    title: 'レポート書き出し',
+    body: 'Markdown / PDF で手元に残せます（Pro）。',
+  },
+  {
+    icon: 'mail',
+    title: 'メール配信',
+    body: '届いたまとめをメールでも受け取れます（Pro）。',
+  },
+  {
+    icon: 'theme',
+    title: 'ライト / ダークテーマ',
+    body: 'システム設定に合わせる、または手動で切り替えられます。',
+  },
+  {
+    icon: 'globe',
+    title: '日本語 / 英語',
+    body: 'アプリの表示言語は日本語と英語に対応しています。',
+  },
+] as const;
+
+const levels = [
+  {
+    level: 1,
+    name: '要点だけ',
+    body: '忙しい日でもさっと読める短さ。何が起きたのかを手早く把握したいときに。',
+    plans: 'すべてのプラン',
+  },
+  {
+    level: 2,
+    name: 'もう少し詳しく',
+    body: '背景や周辺の動きも添えて、判断の材料になる量にまとめます。',
+    plans: 'Standard / Pro',
+  },
+  {
+    level: 3,
+    name: 'いちばん詳しく',
+    body: '重要なテーマを深掘りし、読み応えのある詳細レポートとして残します。',
+    plans: 'Pro',
+  },
+];
+
+const plans = [
+  {
+    name: 'お試し',
+    featured: false,
+    price: '¥0',
+    unit: 'クレジットカード不要',
+    quota: '「今すぐ調べる」を合計 5 件まで',
+    points: ['まずは手元で試せます', '要点だけの詳しさで調査', 'レポート履歴は各ウォッチの直近 7 件'],
+  },
+  {
+    name: 'Standard',
+    featured: true,
+    price: '¥980',
+    unit: '/ 月',
+    quota: '月 60 件のレポート生成',
+    points: [
+      '定期監視（ウォッチの登録数は無制限）',
+      '詳しさは「要点だけ」「もう少し詳しく」',
+      'レポート履歴は無制限・カテゴリ整理',
+    ],
+  },
+  {
+    name: 'Pro',
+    featured: false,
+    price: '¥1,500',
+    unit: '/ 月',
+    quota: '月 120 件のレポート生成',
+    points: [
+      'Standard のすべての機能',
+      '「いちばん詳しく」まで選べる',
+      'Markdown / PDF 書き出しとメール配信',
+    ],
+  },
+];
+
+const comparison = [
+  { label: '定期監視（スケジュール実行）', sample: '—', standard: '○', pro: '○' },
+  { label: 'ウォッチの登録数', sample: '保存のみ', standard: '無制限', pro: '無制限' },
+  { label: 'レポート生成数', sample: '合計 5 件', standard: '月 60 件', pro: '月 120 件' },
+  { label: 'レポートの詳しさ', sample: '要点だけ', standard: '〜もう少し詳しく', pro: '〜いちばん詳しく' },
+  { label: '今すぐ調べる', sample: '1 回 / 日', standard: '3 回 / 日', pro: '5 回 / 日' },
+  { label: 'レポート履歴', sample: '直近 7 件', standard: '無制限', pro: '無制限' },
+  { label: 'カテゴリ', sample: '—', standard: '○', pro: '○' },
+  { label: 'Markdown / PDF 書き出し', sample: '—', standard: '—', pro: '○' },
+  { label: 'メール配信', sample: '—', standard: '—', pro: '○' },
+  { label: '広告', sample: 'なし', standard: 'なし', pro: 'なし' },
+];
+
+const privacyPoints = [
+  'サインインは Apple または Google アカウントで行えます',
+  '届いたレポートは端末内に保存され、オフラインでも読み返せます',
+  '登録したテーマとレポートは、同期のためにサーバーへ保存されます',
+  '広告目的のトラッキングは行いません。全プランで広告は表示されません',
+  'アカウント関連データの削除は、サポート窓口から依頼できます',
+];
+
+const description =
+  'Watcher は、気になるテーマを登録しておくと AI が定期的に調べ、要点と出典をまとめたレポートとして届けるアプリです。毎日 / 毎週 / 毎月のスケジュール実行とプッシュ通知に対応しています。';
 ---
 
-<BaseLayout title={app.name} app={app} locale={locale} description={app.tagline}>
-  <div class="wt-page">
-    <header class="wt-bar">
-      <span>{app.name}</span>
-      <span>STATUS / OK</span>
-    </header>
+<BaseLayout
+  title={app.name}
+  app={app}
+  locale={locale}
+  description={description}
+  ogImage={icon.src}
+>
+  <a class="wt-skip" href="#wt-main">本文へスキップ</a>
 
-    <main class="wt-main">
-      <section class="wt-panel">
-        <p class="wt-label">Application</p>
-        <h1 class="wt-title">{app.name}</h1>
-        <p class="wt-tagline">{app.tagline}</p>
-        <nav class="wt-links">
-          <a href={localizePath(`${app.slug}/support/`, locale)}>
-            {t(locale, 'nav.support')} <span>support</span>
-          </a>
-          <a href={localizePath(`${app.slug}/privacy/`, locale)}>
-            {t(locale, 'nav.privacy')} <span>privacy</span>
-          </a>
-          <a href={localizePath(`${app.slug}/terms/`, locale)}>
-            {t(locale, 'nav.terms')} <span>terms</span>
-          </a>
-        </nav>
-      </section>
-    </main>
+  <header class="wt-nav">
+    <div class="wt-nav__inner">
+      <p class="wt-nav__brand">
+        <Image src={icon} alt="" width={32} height={32} loading="eager" />
+        <span>{app.name}</span>
+      </p>
+      <nav class="wt-nav__links" aria-label="ページ内リンク">
+        <a href="#wt-features">機能</a>
+        <a href="#wt-plans">プラン</a>
+        <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
+      </nav>
+    </div>
+  </header>
 
-    <footer class="wt-foot">
+  <main id="wt-main">
+    <section class="wt-band wt-hero">
+      <div class="wt-band__inner wt-hero__inner">
+        <div class="wt-hero__copy">
+          <p class="wt-hero__badges">
+            <span class="wt-badge wt-badge--dot">App Store にて近日公開</span>
+          </p>
+          <h1 class="wt-h1">あなたの「気になる」を、<br />AI が見張って、<br />まとめて届ける。</h1>
+          <p class="wt-lead">
+            Watcher は、気になるテーマを登録しておくと、AI が定期的に調べて要点と出典つきのレポートにまとめるアプリです。自分で検索して回る時間を、届いたまとめを読む時間に置き換えます。
+          </p>
+          <div class="wt-cta">
+            <a class="wt-btn wt-btn--primary" href="#wt-plans">
+              プランを見る
+              <Icon name="chevron" />
+            </a>
+            <a
+              class="wt-btn wt-btn--ghost"
+              href={localizePath(`${app.slug}/support/`, locale)}
+            >
+              {t(locale, 'nav.support')}
+              <Icon name="chevron" />
+            </a>
+          </div>
+          <p class="wt-hero__meta">iPhone / iPad に対応｜表示言語は日本語 / 英語</p>
+        </div>
+
+        <div class="wt-hero__art">
+          <span class="wt-hero__glow" aria-hidden="true"></span>
+          <div class="wt-hero__tile">
+            <Image
+              src={icon}
+              alt="Watcher のアプリアイコン"
+              widths={[240, 480, 720]}
+              sizes="(max-width: 900px) 52vw, 240px"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wt-band wt-band--surface" aria-labelledby="wt-themes-title">
+      <div class="wt-band__inner">
+        <div class="wt-head">
+          <h2 id="wt-themes-title" class="wt-h2">こんなテーマを、ずっと見張っておく。</h2>
+          <p class="wt-sub">ニュース、製品、競合、技術トレンド。追いかけたいけれど毎日は見に行けない話題ほど向いています。</p>
+        </div>
+
+        <ul class="wt-chips">
+          {
+            themes.map((theme) => (
+              <li>
+                <Icon name="eye" />
+                {theme}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="wt-band wt-band--alt" aria-labelledby="wt-steps-title">
+      <div class="wt-band__inner">
+        <div class="wt-head">
+          <p class="wt-eyebrow">使い方</p>
+          <h2 id="wt-steps-title" class="wt-h2">登録するのは、最初の一度だけ。</h2>
+        </div>
+
+        <ol class="wt-steps">
+          {
+            steps.map((step) => (
+              <li class="wt-step">
+                <span class="wt-step__num" aria-hidden="true" />
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="wt-band wt-band--surface" id="wt-features" aria-labelledby="wt-features-title">
+      <div class="wt-band__inner">
+        <div class="wt-head">
+          <p class="wt-eyebrow">機能</p>
+          <h2 id="wt-features-title" class="wt-h2">集めて、まとめて、見返す。ぜんぶひとつのアプリで。</h2>
+        </div>
+
+        <ul class="wt-features">
+          {
+            features.map((feature) => (
+              <li class="wt-feature">
+                <span class="wt-feature__icon">
+                  <Icon name={feature.icon} />
+                </span>
+                <div class="wt-feature__text">
+                  <h3>{feature.title}</h3>
+                  <p>{feature.body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="wt-band wt-band--alt" aria-labelledby="wt-levels-title">
+      <div class="wt-band__inner">
+        <div class="wt-head">
+          <p class="wt-eyebrow">レポートの詳しさ</p>
+          <h2 id="wt-levels-title" class="wt-h2">テーマごとに、読む深さを選べます。</h2>
+          <p class="wt-sub">ざっと知りたいテーマは短く、じっくり追いたいテーマは深く。ウォッチごとに設定できます。</p>
+        </div>
+
+        <ul class="wt-levels">
+          {
+            levels.map((level) => (
+              <li class="wt-level">
+                <span class="wt-level__bars" aria-hidden="true">
+                  <span data-on={level.level >= 1} />
+                  <span data-on={level.level >= 2} />
+                  <span data-on={level.level >= 3} />
+                </span>
+                <h3>{level.name}</h3>
+                <p>{level.body}</p>
+                <p class="wt-level__plan">{level.plans}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="wt-band wt-band--surface" id="wt-plans" aria-labelledby="wt-plans-title">
+      <div class="wt-band__inner">
+        <div class="wt-head">
+          <p class="wt-eyebrow">プラン</p>
+          <h2 id="wt-plans-title" class="wt-h2">まず試して、続けたくなったら。</h2>
+          <p class="wt-sub">ウォッチの登録数に上限はありません。プランで変わるのは、月に生成できるレポートの件数と詳しさです。</p>
+        </div>
+
+        <ul class="wt-plans">
+          {
+            plans.map((plan) => (
+              <li class="wt-plan" data-featured={plan.featured}>
+                <div class="wt-plan__head">
+                  <h3>{plan.name}</h3>
+                  {plan.featured && <span class="wt-badge">おすすめ</span>}
+                </div>
+                <p class="wt-plan__price">
+                  <strong>{plan.price}</strong>
+                  <span>{plan.unit}</span>
+                </p>
+                <p class="wt-plan__quota">{plan.quota}</p>
+                <ul class="wt-plan__list">
+                  {plan.points.map((point) => (
+                    <li>
+                      <Icon name="check" />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="wt-callout">
+          <h3>10 日間の無料トライアル</h3>
+          <p>定期監視は Standard または Pro でご利用いただけます。どちらかを選んで 10 日間の無料トライアルを開始できます（お支払い方法の登録が必要です）。終了前に通知が届き、それまでにキャンセルすれば料金は発生しません。トライアル期間中に生成できるレポートは、期間に応じた件数（Standard 20 件 / Pro 40 件）です。</p>
+        </div>
+
+        <div class="wt-table-wrap">
+          <table class="wt-table">
+            <caption>プランごとにできること</caption>
+            <thead>
+              <tr>
+                <th scope="col">機能</th>
+                <th scope="col">お試し</th>
+                <th scope="col">Standard</th>
+                <th scope="col">Pro</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                comparison.map((row) => (
+                  <tr>
+                    <th scope="row">{row.label}</th>
+                    <td>
+                      <span class="wt-mark" data-on={row.sample === '○'}>
+                        {row.sample}
+                      </span>
+                      {row.sample === '—' && <span class="wt-sr">利用できません</span>}
+                    </td>
+                    <td>
+                      <span class="wt-mark" data-on={row.standard === '○'}>
+                        {row.standard}
+                      </span>
+                      {row.standard === '—' && <span class="wt-sr">利用できません</span>}
+                    </td>
+                    <td>
+                      <span class="wt-mark" data-on={row.pro === '○'}>
+                        {row.pro}
+                      </span>
+                      {row.pro === '—' && <span class="wt-sr">利用できません</span>}
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <p class="wt-note wt-note--fine">Standard / Pro は自動更新サブスクリプションです。年額プランもご用意しています。購入・更新・解約・復元は App Store のサブスクリプション経由で行われ、実際の価格はストアに表示される金額が正となります。レポート生成数は暦月ごとにリセットされます。</p>
+      </div>
+    </section>
+
+    <section class="wt-band wt-band--alt wt-privacy" aria-labelledby="wt-privacy-title">
+      <div class="wt-band__inner">
+        <div class="wt-privacy__head">
+          <span class="wt-privacy__icon">
+            <Icon name="lock" />
+          </span>
+          <h2 id="wt-privacy-title" class="wt-h2">扱うデータは、必要な分だけ。</h2>
+        </div>
+
+        <ul class="wt-checks">
+          {
+            privacyPoints.map((point) => (
+              <li>
+                <Icon name="check" />
+                <span>{point}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="wt-note">
+          詳しくは<a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>をご覧ください。
+        </p>
+      </div>
+    </section>
+
+    <section class="wt-band wt-closing">
+      <div class="wt-band__inner">
+        <h2 class="wt-h2">気になることは、見張らせておけばいい。</h2>
+        <p class="wt-sub">追いかけるのはアプリの仕事。あなたは、届いたまとめを読むだけ。</p>
+        <div class="wt-cta wt-cta--center">
+          <span class="wt-badge wt-badge--dot">App Store にて近日公開</span>
+        </div>
+        <p class="wt-note wt-note--fine">レポートは AI が生成したものです。重要な判断に使う際は、記載された出典もあわせてご確認ください。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wt-footer">
+    <div class="wt-footer__inner">
+      <p class="wt-footer__brand">{app.name}</p>
+      <nav class="wt-footer__links" aria-label="フッター">
+        <a href={localizePath('', locale)}>ホーム</a>
+        <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
+        <a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>
+        <a href={localizePath(`${app.slug}/terms/`, locale)}>{t(locale, 'nav.terms')}</a>
+        <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+      </nav>
       <LanguageSwitcher locale={locale} />
-      <p>&copy; {new Date().getFullYear()} {site.operatorName}</p>
-    </footer>
-  </div>
+      <p class="wt-footer__meta">&copy; {year} {site.operatorName}</p>
+    </div>
+  </footer>
 </BaseLayout>

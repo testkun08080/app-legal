@@ -1,21 +1,37 @@
 import type { AppConfig } from '@/apps/types';
-import { defaultTheme } from '@/apps/types';
 
+/**
+ * トークンは watcher-app の `src/constants/theme.ts`（WatcherColors / WatcherColorsDark）に揃えています。
+ * accent だけは本文・小さな文字でも AA を満たすよう primary(#4F7CFF) ではなく
+ * primaryDark(#3D63E0) を採用し、ブランド色そのものは theme.css の --wt-brand で使います。
+ */
 export const app: AppConfig = {
   slug: 'watcher',
   name: 'Watcher',
-  tagline: 'Watcher のサポート・法務ページ',
+  tagline: 'あなたの「気になる」を、AI が見張って、まとめて届ける。',
   supportEmail: 'support@legal.testkun.net',
   theme: {
-    ...defaultTheme,
-    bg: '#eef2f6',
+    bg: '#f8fafc',
     surface: '#ffffff',
-    text: '#0f1720',
-    muted: '#5b6775',
-    border: '#d5dde6',
-    accent: '#0f2744',
-    link: '#1d4e89',
-    fontSans: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
-    radius: '0.375rem',
+    text: '#0f172a',
+    muted: '#64748b',
+    border: '#e2e8f0',
+    accent: '#3d63e0',
+    link: '#3d63e0',
+    fontSans:
+      "-apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', system-ui, sans-serif",
+    radius: '0.75rem',
+  },
+  darkTheme: {
+    bg: '#0f172a',
+    surface: '#1e293b',
+    text: '#f8fafc',
+    muted: '#94a3b8',
+    border: '#334155',
+    accent: '#4f7cff',
+    link: '#93b4ff',
+    fontSans:
+      "-apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', system-ui, sans-serif",
+    radius: '0.75rem',
   },
 };
