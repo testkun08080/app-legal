@@ -1,34 +1,344 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { site } from '@/config/site';
+import { getSupportEmail } from '@/apps';
 import type { AppPageProps } from '@/apps/types';
+import DeviceFrame from './components/DeviceFrame.astro';
+import Icon from './components/Icon.astro';
 import './theme.css';
+
+import icon from '@/assets/life-office/icon.png';
+import shotHome from '@/assets/life-office/home.png';
+import shotPunch from '@/assets/life-office/punch.png';
+import shotReceipt from '@/assets/life-office/receipt.png';
+import shotList from '@/assets/life-office/list.png';
+import shotCalendar from '@/assets/life-office/calendar.png';
+import shotStats from '@/assets/life-office/stats-monthly.png';
+import shotHeatmap from '@/assets/life-office/stats-heatmap.png';
+import shotWidget from '@/assets/life-office/widget.png';
 
 interface Props extends AppPageProps {}
 
 const { app } = Astro.props;
 const base = import.meta.env.BASE_URL;
+const supportEmail = getSupportEmail(app);
+const year = new Date().getFullYear();
+
+const gallery = [
+  {
+    src: shotPunch,
+    caption: 'スワイプ打刻',
+    alt: '出勤ボタンをスワイプして打刻する画面。中央に大きな打刻スイッチが表示されている',
+  },
+  {
+    src: shotReceipt,
+    caption: '打刻レシート',
+    alt: '打刻直後に表示されるレシート画面。氏名・日付・時刻・メモとバーコードが印字されている',
+  },
+  {
+    src: shotList,
+    caption: '記録一覧',
+    alt: '月ごとの打刻記録を並べた一覧画面。出勤時刻と退勤時刻が日付ごとに並んでいる',
+  },
+  {
+    src: shotCalendar,
+    caption: 'カレンダー',
+    alt: '出勤した日にマークが付いた月間カレンダー画面',
+  },
+  {
+    src: shotStats,
+    caption: '月次統計',
+    alt: '平均出勤時間・平均退勤時間・合計勤務時間と日別勤務時間の棒グラフを表示した統計画面',
+  },
+];
+
+const features = [
+  { icon: 'swipe', title: 'スワイプ打刻', body: '出勤・退勤を儀式として記録します。' },
+  { icon: 'shake', title: '振り打刻', body: '端末を振って打刻。設定で ON / OFF できます。' },
+  { icon: 'clock', title: '後打刻', body: '打ち忘れた記録をあとから追加できます。' },
+  {
+    icon: 'note',
+    title: '出勤前メモ / 退勤コメント',
+    body: 'その日の一言を打刻に添えて残せます。',
+  },
+  {
+    icon: 'receipt',
+    title: '打刻レシート',
+    body: '記録をレシート風に表示し、写真に保存・共有できます。',
+  },
+  {
+    icon: 'calendar',
+    title: '記録・カレンダー',
+    body: '月間の出勤を一覧とカレンダーで確認できます。',
+  },
+  { icon: 'chart', title: '月次統計', body: 'その月の出勤を集計して表示します。' },
+  { icon: 'bell', title: 'リマインダー', body: '指定時刻に打刻をお知らせします。' },
+  {
+    icon: 'theme',
+    title: 'ライト / ダークテーマ',
+    body: 'システムに合わせる、または手動で切り替えられます。',
+  },
+] as const;
+
+const proFeatures = [
+  {
+    icon: 'widget',
+    title: 'ホーム画面ウィジェット',
+    body: '今日の打刻状況と今月の合計勤務時間を、ホーム画面から一目で。',
+  },
+  {
+    icon: 'chart',
+    title: '拡張統計',
+    body: '曜日ごとの週次集計と、出勤時刻のヒートマップ。',
+  },
+  {
+    icon: 'search',
+    title: 'メモ検索',
+    body: '全文検索・日付・退勤コメントの有無で記録を絞り込み。',
+  },
+  {
+    icon: 'export',
+    title: 'CSV / PDF',
+    body: '月・年・期間指定で書き出し（複数月は ZIP）。CSV からの取り込みにも対応。',
+  },
+] as const;
+
+const comparison = [
+  { label: 'スワイプ打刻・振り打刻・後打刻', free: true },
+  { label: '出勤前メモ / 退勤コメント', free: true },
+  { label: 'レシート表示・写真保存・共有', free: true },
+  { label: '記録一覧・カレンダー・月次統計', free: true },
+  { label: '目標時刻・勤務曜日・毎日のリマインダー', free: true },
+  { label: 'ライト / ダークテーマ', free: true },
+  { label: 'ホーム画面ウィジェット', free: false },
+  { label: '拡張統計（週次・ヒートマップ）', free: false },
+  { label: 'メモ検索', free: false },
+  { label: 'CSV / PDF エクスポート、CSV インポート', free: false },
+  { label: 'レシートのバーコードの内容', free: false },
+];
+
+const privacyPoints = [
+  'アカウント登録は不要です',
+  '打刻記録は端末内の SQLite にだけ保存されます',
+  '当方のサーバーへ送信されるデータはありません',
+  'オフラインでも使えます',
+  '広告目的のトラッキングは行いません',
+];
 ---
 
-<BaseLayout title={app.name} app={app} description={app.tagline}>
-  <div class="lo-page">
-    <header class="lo-top">
-      <a href={base}>App Legal</a>
-    </header>
+<BaseLayout
+  title={app.name}
+  app={app}
+  description="怠惰な自分に、毎朝ひとつの儀式を。LIFE OFFICE は昔のタイムカードの「カチッ」をスマホで再現する、あなただけの出勤スイッチです。"
+  ogImage={icon.src}
+>
+  <a class="lo-skip" href="#lo-main">本文へスキップ</a>
 
-    <main class="lo-hero">
-      <p class="lo-kicker">Morning ritual</p>
-      <h1 class="lo-title">{app.name}</h1>
-      <p class="lo-tagline">{app.tagline}</p>
-      <nav class="lo-actions">
-        <a class="primary" href={`${base}${app.slug}/support/`}>サポート</a>
-        <a class="ghost" href={`${base}${app.slug}/privacy/`}>プライバシー</a>
-        <a class="ghost" href={`${base}${app.slug}/terms/`}>利用規約</a>
+  <header class="lo-nav">
+    <div class="lo-nav__inner">
+      <p class="lo-nav__brand">
+        <Image src={icon} alt="" width={32} height={32} loading="eager" />
+        <span>{app.name}</span>
+      </p>
+      {
+        app.appStoreUrl && (
+          <a class="lo-btn lo-btn--sm" href={app.appStoreUrl} rel="noopener">
+            App Store
+          </a>
+        )
+      }
+    </div>
+  </header>
+
+  <main id="lo-main">
+    <section class="lo-hero">
+      <div class="lo-hero__copy">
+        <Image class="lo-appicon" src={icon} alt={`${app.name} のアプリアイコン`} width={104} height={104} loading="eager" />
+        <p class="lo-eyebrow">{app.name}</p>
+        <h1 class="lo-h1">怠惰な自分に、<br />毎朝ひとつの儀式を。</h1>
+        <p class="lo-lead">
+          昔のタイムカードの「カチッ」という感覚を、スマホで再現するパーソナルな出勤アプリ。
+          GPS も会社との連携も不要。あなただけの出勤スイッチとして使えます。
+        </p>
+        <div class="lo-cta">
+          {
+            app.appStoreUrl && (
+              <a class="lo-btn lo-btn--primary" href={app.appStoreUrl} rel="noopener">
+                App Store で入手
+              </a>
+            )
+          }
+          <a class="lo-btn lo-btn--ghost" href={`${base}${app.slug}/support/`}>サポート</a>
+        </div>
+        <p class="lo-hero__meta">iPhone・iPad 対応 / iOS 16.0 以降 / 無料（App 内課金あり）</p>
+      </div>
+
+      <div class="lo-hero__shot">
+        <DeviceFrame
+          src={shotHome}
+          alt="勤務中のホーム画面。出勤時刻 08:40、経過時間 06:29 と退勤ボタンが表示されている"
+          eager={true}
+          widths={[340, 520, 680]}
+          sizes="(max-width: 900px) 62vw, 340px"
+        />
+      </div>
+    </section>
+
+    <section class="lo-section" aria-labelledby="lo-gallery-title">
+      <div class="lo-section__head">
+        <h2 id="lo-gallery-title" class="lo-h2">打刻から記録まで、ひとつのアプリで。</h2>
+        <p class="lo-sub">打刻する、レシートを残す、あとから振り返る。</p>
+      </div>
+
+      <div class="lo-gallery">
+        <ul class="lo-gallery__track">
+          {
+            gallery.map((shot) => (
+              <li>
+                <DeviceFrame src={shot.src} alt={shot.alt} caption={shot.caption} />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="lo-section lo-section--alt" aria-labelledby="lo-features-title">
+      <div class="lo-section__head">
+        <p class="lo-eyebrow">無料でできること</p>
+        <h2 id="lo-features-title" class="lo-h2">主な機能</h2>
+      </div>
+
+      <ul class="lo-grid">
+        {
+          features.map((feature) => (
+            <li class="lo-card">
+              <span class="lo-card__icon">
+                <Icon name={feature.icon} />
+              </span>
+              <h3>{feature.title}</h3>
+              <p>{feature.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="lo-section lo-pro" aria-labelledby="lo-pro-title">
+      <div class="lo-section__head">
+        <p class="lo-eyebrow">{app.name} Pro</p>
+        <h2 id="lo-pro-title" class="lo-h2">記録を、もっと使えるものに。</h2>
+        <p class="lo-price">
+          <strong>¥600</strong>
+          <span>買い切り・サブスクリプションではありません</span>
+        </p>
+      </div>
+
+      <div class="lo-pro__body">
+        <ul class="lo-grid lo-grid--pro">
+          {
+            proFeatures.map((feature) => (
+              <li class="lo-card">
+                <span class="lo-card__icon">
+                  <Icon name={feature.icon} />
+                </span>
+                <h3>{feature.title}</h3>
+                <p>{feature.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="lo-pro__shots">
+          <DeviceFrame
+            src={shotWidget}
+            alt="ホーム画面に置いた LIFE OFFICE のウィジェット。出勤時刻・経過時間・予定退勤と今月の合計勤務時間のグラフが表示されている"
+            caption="ウィジェット"
+          />
+          <DeviceFrame
+            src={shotHeatmap}
+            alt="出勤時刻の傾向を色の濃さで示したヒートマップ画面"
+            caption="ヒートマップ"
+          />
+        </div>
+      </div>
+
+      <div class="lo-table-wrap">
+        <table class="lo-table">
+          <caption>無料 / Pro でできること</caption>
+          <thead>
+            <tr>
+              <th scope="col">機能</th>
+              <th scope="col">無料</th>
+              <th scope="col">Pro</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              comparison.map((row) => (
+                <tr>
+                  <th scope="row">{row.label}</th>
+                  <td>
+                    <span class="lo-mark" data-on={row.free}>
+                      {row.free ? '○' : '—'}
+                    </span>
+                    <span class="lo-sr">{row.free ? '利用できます' : '利用できません'}</span>
+                  </td>
+                  <td>
+                    <span class="lo-mark" data-on="true">○</span>
+                    <span class="lo-sr">利用できます</span>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="lo-section lo-section--alt lo-privacy" aria-labelledby="lo-privacy-title">
+      <span class="lo-privacy__icon">
+        <Icon name="lock" />
+      </span>
+      <h2 id="lo-privacy-title" class="lo-h2">データは、あなたの端末の中だけに。</h2>
+      <ul class="lo-checks">
+        {privacyPoints.map((point) => <li>{point}</li>)}
+      </ul>
+      <p class="lo-note">
+        詳しくは<a href={`${base}${app.slug}/privacy/`}>プライバシーポリシー</a>をご覧ください。
+      </p>
+    </section>
+
+    <section class="lo-section lo-closing">
+      <h2 class="lo-h2">{app.tagline}</h2>
+      <div class="lo-cta lo-cta--center">
+        {
+          app.appStoreUrl && (
+            <a class="lo-btn lo-btn--primary" href={app.appStoreUrl} rel="noopener">
+              App Store で入手
+            </a>
+          )
+        }
+      </div>
+      <p class="lo-note lo-note--fine">
+        本アプリは雇用主向けの勤怠管理サービスではありません。個人の習慣づくりを目的としています。
+      </p>
+    </section>
+  </main>
+
+  <footer class="lo-footer">
+    <div class="lo-footer__inner">
+      <p class="lo-footer__brand">{app.name}</p>
+      <nav class="lo-footer__links" aria-label="フッター">
+        <a href={`${base}${app.slug}/support/`}>サポート</a>
+        <a href={`${base}${app.slug}/privacy/`}>プライバシーポリシー</a>
+        <a href={`${base}${app.slug}/terms/`}>利用規約</a>
+        <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
       </nav>
-    </main>
-
-    <footer class="lo-foot">
-      <p>&copy; {new Date().getFullYear()} {site.operatorName}</p>
-    </footer>
-  </div>
+      <p class="lo-footer__meta">
+        &copy; {year} {site.operatorName} · <a href={base}>アプリ一覧</a>
+      </p>
+    </div>
+  </footer>
 </BaseLayout>

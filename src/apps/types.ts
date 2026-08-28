@@ -17,6 +17,10 @@ export type AppConfig = {
   /** 未指定時は site.defaultSupportEmail を使用 */
   supportEmail?: string;
   theme: AppTheme;
+  /** 指定すると prefers-color-scheme: dark でこのトークンに切り替わります */
+  darkTheme?: AppTheme;
+  /** App Store の配信 URL。未指定ならダウンロード導線を出しません */
+  appStoreUrl?: string;
 };
 
 export type AppPageProps = {

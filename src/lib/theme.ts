@@ -1,6 +1,6 @@
 import type { AppTheme } from '@/apps/types';
 
-export function themeToStyle(theme: AppTheme): string {
+function themeVars(theme: AppTheme): string[] {
   const vars = [
     `--color-bg: ${theme.bg}`,
     `--color-surface: ${theme.surface}`,
@@ -19,5 +19,23 @@ export function themeToStyle(theme: AppTheme): string {
     vars.push(`--radius: ${theme.radius}`);
   }
 
-  return vars.join('; ');
+  return vars;
+}
+
+/**
+ * `<style>` に流し込む用のテーマ定義。インライン style 属性と違い
+ * `prefers-color-scheme` のメディアクエリで上書きできます。
+ */
+export function themeToCss(slug: string, theme: AppTheme, darkTheme?: AppTheme): string {
+  const selector = `html[data-app="${slug}"]`;
+  const block = (t: AppTheme, scheme: 'light' | 'dark') =>
+    `${selector}{color-scheme:${scheme};${themeVars(t).join(';')}}`;
+
+  const light = block(theme, 'light');
+
+  if (!darkTheme) {
+    return light;
+  }
+
+  return `${light}@media (prefers-color-scheme: dark){${block(darkTheme, 'dark')}}`;
 }
