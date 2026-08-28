@@ -29,26 +29,31 @@ const gallery = [
   {
     src: shotPunch,
     caption: 'スワイプ打刻',
+    body: 'ワンスワイプで出勤・退勤をかんたんに記録。',
     alt: '出勤ボタンをスワイプして打刻する画面。中央に大きな打刻スイッチが表示されている',
   },
   {
     src: shotReceipt,
     caption: '打刻レシート',
+    body: 'その日の記録をレシート風に。写真で保存・共有も。',
     alt: '打刻直後に表示されるレシート画面。氏名・日付・時刻・メモとバーコードが印字されている',
   },
   {
     src: shotList,
     caption: '記録一覧',
+    body: '過去の記録を一覧で確認。コメントも残せます。',
     alt: '月ごとの打刻記録を並べた一覧画面。出勤時刻と退勤時刻が日付ごとに並んでいる',
   },
   {
     src: shotCalendar,
     caption: 'カレンダー',
+    body: 'ひと月分をカレンダー表示。日付をタップで詳細へ。',
     alt: '出勤した日にマークが付いた月間カレンダー画面',
   },
   {
     src: shotStats,
     caption: '月次統計',
+    body: '出勤日数や平均時間などをグラフで可視化。',
     alt: '平均出勤時間・平均退勤時間・合計勤務時間と日別勤務時間の棒グラフを表示した統計画面',
   },
 ];
@@ -143,8 +148,9 @@ const privacyPoints = [
       </p>
       {
         app.appStoreUrl && (
-          <a class="lo-btn lo-btn--sm" href={app.appStoreUrl} rel="noopener">
-            App Store
+          <a class="lo-btn lo-btn--primary lo-btn--sm" href={app.appStoreUrl} rel="noopener">
+            <Icon name="apple" />
+            <span>App Store<span class="lo-nav__cta-suffix"> で入手</span></span>
           </a>
         )
       }
@@ -152,178 +158,227 @@ const privacyPoints = [
   </header>
 
   <main id="lo-main">
-    <section class="lo-hero">
-      <div class="lo-hero__copy">
-        <Image class="lo-appicon" src={icon} alt={`${app.name} のアプリアイコン`} width={104} height={104} loading="eager" />
-        <p class="lo-eyebrow">{app.name}</p>
-        <h1 class="lo-h1">怠惰な自分に、<br />毎朝ひとつの儀式を。</h1>
-        <p class="lo-lead">
-          昔のタイムカードの「カチッ」という感覚を、スマホで再現するパーソナルな出勤アプリ。
-          GPS も会社との連携も不要。あなただけの出勤スイッチとして使えます。
+    <section class="lo-band lo-hero">
+      <div class="lo-band__inner lo-hero__inner">
+        <div class="lo-hero__copy">
+          <h1 class="lo-h1">怠惰な自分に、<br />毎朝ひとつの<br />儀式を。</h1>
+          <p class="lo-lead">
+            LIFE OFFICE は、昔のタイムカードの「カチッ」をスマホで再現する出勤アプリです。
+            GPS も会社との連携も不要。あなただけの出勤スイッチとして使えます。
+          </p>
+          <div class="lo-cta">
+            {
+              app.appStoreUrl && (
+                <a class="lo-btn lo-btn--primary" href={app.appStoreUrl} rel="noopener">
+                  <Icon name="apple" />
+                  App Store で入手
+                </a>
+              )
+            }
+            <a class="lo-btn lo-btn--link" href={`${base}${app.slug}/support/`}>
+              サポート
+              <Icon name="chevron" />
+            </a>
+          </div>
+          <p class="lo-hero__meta">iPhone / iPad に対応｜iOS 16.0 以降が必要です</p>
+        </div>
+
+        <div class="lo-hero__art">
+          <span class="lo-hero__blob" aria-hidden="true"></span>
+          <div class="lo-hero__devices">
+            <div class="lo-hero__device lo-hero__device--main">
+              <DeviceFrame
+                src={shotHome}
+                alt="勤務中のホーム画面。出勤時刻 08:40、経過時間 06:29 と退勤ボタンが表示されている"
+                eager={true}
+                widths={[340, 520, 680]}
+                sizes="(max-width: 900px) 60vw, 320px"
+              />
+            </div>
+            <div class="lo-hero__device lo-hero__device--sub">
+              <DeviceFrame
+                src={shotPunch}
+                alt="出勤ボタンをスワイプして打刻する画面"
+                widths={[220, 340, 440]}
+                sizes="(max-width: 900px) 34vw, 180px"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lo-band lo-band--surface" aria-labelledby="lo-gallery-title">
+      <div class="lo-band__inner">
+        <div class="lo-head">
+          <h2 id="lo-gallery-title" class="lo-h2">打刻から記録まで、ひとつのアプリで。</h2>
+          <p class="lo-sub">打刻する、レシートを残す、あとから振り返る。</p>
+        </div>
+
+        <div class="lo-gallery">
+          <ul class="lo-gallery__track">
+            {
+              gallery.map((shot) => (
+                <li class="lo-gallery__item">
+                  <DeviceFrame src={shot.src} alt={shot.alt} />
+                  <h3>{shot.caption}</h3>
+                  <p>{shot.body}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <p class="lo-gallery__note">iPhone / iPad に対応</p>
+      </div>
+    </section>
+
+    <section class="lo-band lo-band--alt" aria-labelledby="lo-features-title">
+      <div class="lo-band__inner">
+        <div class="lo-head">
+          <p class="lo-eyebrow">無料でできること</p>
+          <h2 id="lo-features-title" class="lo-h2">便利な機能で、毎日をもっと快適に。</h2>
+        </div>
+
+        <ul class="lo-features">
+          {
+            features.map((feature) => (
+              <li class="lo-feature">
+                <span class="lo-feature__icon">
+                  <Icon name={feature.icon} />
+                </span>
+                <div class="lo-feature__text">
+                  <h3>{feature.title}</h3>
+                  <p>{feature.body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="lo-band lo-band--surface lo-pro" aria-labelledby="lo-pro-title">
+      <div class="lo-band__inner">
+        <div class="lo-head">
+          <p class="lo-eyebrow">{app.name} Pro</p>
+          <h2 id="lo-pro-title" class="lo-h2">記録を、もっと使えるものに。</h2>
+          <p class="lo-price">
+            <strong>¥600</strong>
+            <span class="lo-price__tag">買い切り</span>
+          </p>
+          <p class="lo-sub">サブスクリプションではありません。より高度な機能で働き方をサポート。</p>
+        </div>
+
+        <div class="lo-pro__body">
+          <ul class="lo-features lo-features--pro">
+            {
+              proFeatures.map((feature) => (
+                <li class="lo-feature">
+                  <span class="lo-feature__icon">
+                    <Icon name={feature.icon} />
+                  </span>
+                  <div class="lo-feature__text">
+                    <h3>{feature.title}</h3>
+                    <p>{feature.body}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+
+          <div class="lo-pro__shots">
+            <DeviceFrame
+              src={shotWidget}
+              alt="ホーム画面に置いた LIFE OFFICE のウィジェット。出勤時刻・経過時間・予定退勤と今月の合計勤務時間のグラフが表示されている"
+              caption="ウィジェット"
+            />
+            <DeviceFrame
+              src={shotHeatmap}
+              alt="出勤時刻の傾向を色の濃さで示したヒートマップ画面"
+              caption="ヒートマップ"
+            />
+          </div>
+        </div>
+
+        <div class="lo-table-wrap">
+          <table class="lo-table">
+            <caption>無料 / Pro でできること</caption>
+            <thead>
+              <tr>
+                <th scope="col">機能</th>
+                <th scope="col">無料</th>
+                <th scope="col">Pro</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                comparison.map((row) => (
+                  <tr>
+                    <th scope="row">{row.label}</th>
+                    <td>
+                      <span class="lo-mark" data-on={row.free}>
+                        {row.free ? '○' : '—'}
+                      </span>
+                      <span class="lo-sr">{row.free ? '利用できます' : '利用できません'}</span>
+                    </td>
+                    <td>
+                      <span class="lo-mark" data-on="true">○</span>
+                      <span class="lo-sr">利用できます</span>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="lo-band lo-band--alt lo-privacy" aria-labelledby="lo-privacy-title">
+      <div class="lo-band__inner">
+        <div class="lo-privacy__head">
+          <span class="lo-privacy__icon">
+            <Icon name="lock" />
+          </span>
+          <h2 id="lo-privacy-title" class="lo-h2">データは、あなたの端末の中だけに。</h2>
+        </div>
+
+        <ul class="lo-checks">
+          {
+            privacyPoints.map((point) => (
+              <li>
+                <Icon name="check" />
+                <span>{point}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="lo-note">
+          詳しくは<a href={`${base}${app.slug}/privacy/`}>プライバシーポリシー</a>をご覧ください。
         </p>
-        <div class="lo-cta">
+      </div>
+    </section>
+
+    <section class="lo-band lo-closing">
+      <div class="lo-band__inner">
+        <h2 class="lo-h2">{app.tagline}</h2>
+        <div class="lo-cta lo-cta--center">
           {
             app.appStoreUrl && (
               <a class="lo-btn lo-btn--primary" href={app.appStoreUrl} rel="noopener">
+                <Icon name="apple" />
                 App Store で入手
               </a>
             )
           }
-          <a class="lo-btn lo-btn--ghost" href={`${base}${app.slug}/support/`}>サポート</a>
         </div>
-        <p class="lo-hero__meta">iPhone・iPad 対応 / iOS 16.0 以降 / 無料（App 内課金あり）</p>
-      </div>
-
-      <div class="lo-hero__shot">
-        <DeviceFrame
-          src={shotHome}
-          alt="勤務中のホーム画面。出勤時刻 08:40、経過時間 06:29 と退勤ボタンが表示されている"
-          eager={true}
-          widths={[340, 520, 680]}
-          sizes="(max-width: 900px) 62vw, 340px"
-        />
-      </div>
-    </section>
-
-    <section class="lo-section" aria-labelledby="lo-gallery-title">
-      <div class="lo-section__head">
-        <h2 id="lo-gallery-title" class="lo-h2">打刻から記録まで、ひとつのアプリで。</h2>
-        <p class="lo-sub">打刻する、レシートを残す、あとから振り返る。</p>
-      </div>
-
-      <div class="lo-gallery">
-        <ul class="lo-gallery__track">
-          {
-            gallery.map((shot) => (
-              <li>
-                <DeviceFrame src={shot.src} alt={shot.alt} caption={shot.caption} />
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </section>
-
-    <section class="lo-section lo-section--alt" aria-labelledby="lo-features-title">
-      <div class="lo-section__head">
-        <p class="lo-eyebrow">無料でできること</p>
-        <h2 id="lo-features-title" class="lo-h2">主な機能</h2>
-      </div>
-
-      <ul class="lo-grid">
-        {
-          features.map((feature) => (
-            <li class="lo-card">
-              <span class="lo-card__icon">
-                <Icon name={feature.icon} />
-              </span>
-              <h3>{feature.title}</h3>
-              <p>{feature.body}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </section>
-
-    <section class="lo-section lo-pro" aria-labelledby="lo-pro-title">
-      <div class="lo-section__head">
-        <p class="lo-eyebrow">{app.name} Pro</p>
-        <h2 id="lo-pro-title" class="lo-h2">記録を、もっと使えるものに。</h2>
-        <p class="lo-price">
-          <strong>¥600</strong>
-          <span>買い切り・サブスクリプションではありません</span>
+        <p class="lo-note lo-note--fine">
+          シンプルで、続けやすい。本アプリは雇用主向けの勤怠管理サービスではなく、
+          個人の習慣づくりを目的としています。
         </p>
       </div>
-
-      <div class="lo-pro__body">
-        <ul class="lo-grid lo-grid--pro">
-          {
-            proFeatures.map((feature) => (
-              <li class="lo-card">
-                <span class="lo-card__icon">
-                  <Icon name={feature.icon} />
-                </span>
-                <h3>{feature.title}</h3>
-                <p>{feature.body}</p>
-              </li>
-            ))
-          }
-        </ul>
-
-        <div class="lo-pro__shots">
-          <DeviceFrame
-            src={shotWidget}
-            alt="ホーム画面に置いた LIFE OFFICE のウィジェット。出勤時刻・経過時間・予定退勤と今月の合計勤務時間のグラフが表示されている"
-            caption="ウィジェット"
-          />
-          <DeviceFrame
-            src={shotHeatmap}
-            alt="出勤時刻の傾向を色の濃さで示したヒートマップ画面"
-            caption="ヒートマップ"
-          />
-        </div>
-      </div>
-
-      <div class="lo-table-wrap">
-        <table class="lo-table">
-          <caption>無料 / Pro でできること</caption>
-          <thead>
-            <tr>
-              <th scope="col">機能</th>
-              <th scope="col">無料</th>
-              <th scope="col">Pro</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              comparison.map((row) => (
-                <tr>
-                  <th scope="row">{row.label}</th>
-                  <td>
-                    <span class="lo-mark" data-on={row.free}>
-                      {row.free ? '○' : '—'}
-                    </span>
-                    <span class="lo-sr">{row.free ? '利用できます' : '利用できません'}</span>
-                  </td>
-                  <td>
-                    <span class="lo-mark" data-on="true">○</span>
-                    <span class="lo-sr">利用できます</span>
-                  </td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="lo-section lo-section--alt lo-privacy" aria-labelledby="lo-privacy-title">
-      <span class="lo-privacy__icon">
-        <Icon name="lock" />
-      </span>
-      <h2 id="lo-privacy-title" class="lo-h2">データは、あなたの端末の中だけに。</h2>
-      <ul class="lo-checks">
-        {privacyPoints.map((point) => <li>{point}</li>)}
-      </ul>
-      <p class="lo-note">
-        詳しくは<a href={`${base}${app.slug}/privacy/`}>プライバシーポリシー</a>をご覧ください。
-      </p>
-    </section>
-
-    <section class="lo-section lo-closing">
-      <h2 class="lo-h2">{app.tagline}</h2>
-      <div class="lo-cta lo-cta--center">
-        {
-          app.appStoreUrl && (
-            <a class="lo-btn lo-btn--primary" href={app.appStoreUrl} rel="noopener">
-              App Store で入手
-            </a>
-          )
-        }
-      </div>
-      <p class="lo-note lo-note--fine">
-        本アプリは雇用主向けの勤怠管理サービスではありません。個人の習慣づくりを目的としています。
-      </p>
     </section>
   </main>
 
@@ -331,14 +386,13 @@ const privacyPoints = [
     <div class="lo-footer__inner">
       <p class="lo-footer__brand">{app.name}</p>
       <nav class="lo-footer__links" aria-label="フッター">
+        <a href={base}>ホーム</a>
         <a href={`${base}${app.slug}/support/`}>サポート</a>
         <a href={`${base}${app.slug}/privacy/`}>プライバシーポリシー</a>
         <a href={`${base}${app.slug}/terms/`}>利用規約</a>
         <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
       </nav>
-      <p class="lo-footer__meta">
-        &copy; {year} {site.operatorName} · <a href={base}>アプリ一覧</a>
-      </p>
+      <p class="lo-footer__meta">&copy; {year} {site.operatorName}</p>
     </div>
   </footer>
 </BaseLayout>
