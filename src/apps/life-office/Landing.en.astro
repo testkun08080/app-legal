@@ -1,0 +1,401 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import { site } from '@/config/site';
+import { getSupportEmail } from '@/apps';
+import { localizePath, t } from '@/i18n';
+import type { AppPageProps } from '@/apps/types';
+import DeviceFrame from './components/DeviceFrame.astro';
+import Icon from './components/Icon.astro';
+import './theme.css';
+
+import icon from '@/assets/life-office/icon.png';
+import shotHome from '@/assets/life-office/home.png';
+import shotPunch from '@/assets/life-office/punch.png';
+import shotReceipt from '@/assets/life-office/receipt.png';
+import shotList from '@/assets/life-office/list.png';
+import shotCalendar from '@/assets/life-office/calendar.png';
+import shotStats from '@/assets/life-office/stats-monthly.png';
+import shotHeatmap from '@/assets/life-office/stats-heatmap.png';
+import shotWidget from '@/assets/life-office/widget.png';
+
+interface Props extends AppPageProps {}
+
+const { app, locale = 'en' } = Astro.props;
+const supportEmail = getSupportEmail(app);
+const year = new Date().getFullYear();
+
+const gallery = [
+  {
+    src: shotPunch,
+    caption: 'Swipe to punch',
+    body: 'Record clock-in and clock-out with a single swipe.',
+    alt: 'Swipe the punch button to clock in. A large punch switch is shown in the center of the screen',
+  },
+  {
+    src: shotReceipt,
+    caption: 'Punch receipt',
+    body: 'View your daily record as a receipt-style slip. Save or share as a photo.',
+    alt: 'Receipt screen shown right after punching. Name, date, time, notes, and barcode are printed',
+  },
+  {
+    src: shotList,
+    caption: 'Record list',
+    body: 'Browse past records in a list. Add comments too.',
+    alt: 'List of punch records by month. Clock-in and clock-out times are shown for each date',
+  },
+  {
+    src: shotCalendar,
+    caption: 'Calendar',
+    body: 'See a full month at a glance. Tap a date for details.',
+    alt: 'Monthly calendar with marks on days you clocked in',
+  },
+  {
+    src: shotStats,
+    caption: 'Monthly stats',
+    body: 'Visualize work days, average times, and more with charts.',
+    alt: 'Stats screen showing average clock-in/out times, total hours, and a daily bar chart',
+  },
+];
+
+const features = [
+  { icon: 'swipe', title: 'Swipe to punch', body: 'Record clock-in and clock-out as a daily ritual.' },
+  { icon: 'shake', title: 'Shake to punch', body: 'Punch by shaking your device. Toggle ON/OFF in settings.' },
+  { icon: 'clock', title: 'Retroactive punch', body: 'Add records you forgot to punch earlier.' },
+  {
+    icon: 'note',
+    title: 'Pre-clock-in notes / clock-out comments',
+    body: 'Attach a quick note to each punch.',
+  },
+  {
+    icon: 'receipt',
+    title: 'Punch receipt',
+    body: 'Display records as receipt-style slips. Save to photos or share.',
+  },
+  {
+    icon: 'calendar',
+    title: 'Records & calendar',
+    body: 'Review monthly attendance in a list and calendar view.',
+  },
+  { icon: 'chart', title: 'Monthly stats', body: 'Summarize and display your attendance for the month.' },
+  { icon: 'bell', title: 'Reminders', body: 'Get notified to punch at your chosen time.' },
+  {
+    icon: 'theme',
+    title: 'Light / dark theme',
+    body: 'Follow system settings or switch manually.',
+  },
+] as const;
+
+const proFeatures = [
+  {
+    icon: 'widget',
+    title: 'Home screen widget',
+    body: 'See today\'s punch status and this month\'s total hours at a glance.',
+  },
+  {
+    icon: 'chart',
+    title: 'Extended statistics',
+    body: 'Weekly summaries by day of week and a clock-in time heatmap.',
+  },
+  {
+    icon: 'search',
+    title: 'Note search',
+    body: 'Filter records with full-text search, date, and clock-out comment filters.',
+  },
+  {
+    icon: 'export',
+    title: 'CSV / PDF',
+    body: 'Export by month, year, or custom range (multi-month as ZIP). Import from CSV too.',
+  },
+] as const;
+
+const comparison = [
+  { label: 'Swipe / shake / retroactive punch', free: true },
+  { label: 'Pre-clock-in notes / clock-out comments', free: true },
+  { label: 'Receipt view, photo save & share', free: true },
+  { label: 'Record list, calendar & monthly stats', free: true },
+  { label: 'Target time, work days & daily reminders', free: true },
+  { label: 'Light / dark theme', free: true },
+  { label: 'Home screen widget', free: false },
+  { label: 'Extended stats (weekly & heatmap)', free: false },
+  { label: 'Note search', free: false },
+  { label: 'CSV / PDF export, CSV import', free: false },
+  { label: 'Receipt barcode content', free: false },
+];
+
+const privacyPoints = [
+  'No account registration required',
+  'Punch records are stored only in on-device SQLite',
+  'No data is sent to our servers',
+  'Works offline',
+  'No advertising tracking',
+];
+---
+
+<BaseLayout
+  title={app.name}
+  app={app}
+  locale={locale}
+  description="One daily ritual for your lazy self. LIFE OFFICE brings the classic time-card click to your phone — your personal clock-in switch."
+  ogImage={icon.src}
+>
+  <a class="lo-skip" href="#lo-main">Skip to content</a>
+
+  <header class="lo-nav">
+    <div class="lo-nav__inner">
+      <p class="lo-nav__brand">
+        <Image src={icon} alt="" width={32} height={32} loading="eager" />
+        <span>{app.name}</span>
+      </p>
+      {
+        app.appStoreUrl && (
+          <a class="lo-btn lo-btn--primary lo-btn--sm" href={app.appStoreUrl} rel="noopener">
+            <Icon name="apple" />
+            <span>App Store<span class="lo-nav__cta-suffix"> — Get</span></span>
+          </a>
+        )
+      }
+    </div>
+  </header>
+
+  <main id="lo-main">
+    <section class="lo-band lo-hero">
+      <div class="lo-band__inner lo-hero__inner">
+        <div class="lo-hero__copy">
+          <h1 class="lo-h1">One daily ritual<br />for your<br />lazy self.</h1>
+          <p class="lo-lead">
+            LIFE OFFICE recreates the classic time-card click on your phone.
+            No GPS, no employer integration — just your personal clock-in switch.
+          </p>
+          <div class="lo-cta">
+            {
+              app.appStoreUrl && (
+                <a class="lo-btn lo-btn--primary" href={app.appStoreUrl} rel="noopener">
+                  <Icon name="apple" />
+                  Get on the App Store
+                </a>
+              )
+            }
+            <a class="lo-btn lo-btn--link" href={localizePath(`${app.slug}/support/`, locale)}>
+              {t(locale, 'nav.support')}
+              <Icon name="chevron" />
+            </a>
+          </div>
+          <p class="lo-hero__meta">For iPhone / iPad · Requires iOS 16.0 or later</p>
+        </div>
+
+        <div class="lo-hero__art">
+          <span class="lo-hero__blob" aria-hidden="true"></span>
+          <div class="lo-hero__devices">
+            <div class="lo-hero__device lo-hero__device--main">
+              <DeviceFrame
+                src={shotHome}
+                alt="Home screen while working. Shows clock-in time 08:40, elapsed 06:29, and clock-out button"
+                eager={true}
+                widths={[340, 520, 680]}
+                sizes="(max-width: 900px) 60vw, 320px"
+              />
+            </div>
+            <div class="lo-hero__device lo-hero__device--sub">
+              <DeviceFrame
+                src={shotPunch}
+                alt="Swipe the clock-in button to punch"
+                widths={[220, 340, 440]}
+                sizes="(max-width: 900px) 34vw, 180px"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lo-band lo-band--surface" aria-labelledby="lo-gallery-title">
+      <div class="lo-band__inner">
+        <div class="lo-head">
+          <h2 id="lo-gallery-title" class="lo-h2">From punch to records — all in one app.</h2>
+          <p class="lo-sub">Punch in, keep a receipt, look back later.</p>
+        </div>
+
+        <div class="lo-gallery">
+          <ul class="lo-gallery__track">
+            {
+              gallery.map((shot) => (
+                <li class="lo-gallery__item">
+                  <DeviceFrame src={shot.src} alt={shot.alt} />
+                  <h3>{shot.caption}</h3>
+                  <p>{shot.body}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <p class="lo-gallery__note">For iPhone / iPad</p>
+      </div>
+    </section>
+
+    <section class="lo-band lo-band--alt" aria-labelledby="lo-features-title">
+      <div class="lo-band__inner">
+        <div class="lo-head">
+          <p class="lo-eyebrow">Free features</p>
+          <h2 id="lo-features-title" class="lo-h2">Handy tools for a smoother daily routine.</h2>
+        </div>
+
+        <ul class="lo-features">
+          {
+            features.map((feature) => (
+              <li class="lo-feature">
+                <span class="lo-feature__icon">
+                  <Icon name={feature.icon} />
+                </span>
+                <div class="lo-feature__text">
+                  <h3>{feature.title}</h3>
+                  <p>{feature.body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="lo-band lo-band--surface lo-pro" aria-labelledby="lo-pro-title">
+      <div class="lo-band__inner">
+        <div class="lo-head">
+          <p class="lo-eyebrow">{app.name} Pro</p>
+          <h2 id="lo-pro-title" class="lo-h2">Make your records even more useful.</h2>
+          <p class="lo-price">
+            <strong>¥600</strong>
+            <span class="lo-price__tag">One-time purchase</span>
+          </p>
+          <p class="lo-sub">Not a subscription. Advanced features to support how you work.</p>
+        </div>
+
+        <div class="lo-pro__body">
+          <ul class="lo-features lo-features--pro">
+            {
+              proFeatures.map((feature) => (
+                <li class="lo-feature">
+                  <span class="lo-feature__icon">
+                    <Icon name={feature.icon} />
+                  </span>
+                  <div class="lo-feature__text">
+                    <h3>{feature.title}</h3>
+                    <p>{feature.body}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+
+          <div class="lo-pro__shots">
+            <DeviceFrame
+              src={shotWidget}
+              alt="LIFE OFFICE home screen widget showing clock-in time, elapsed time, planned clock-out, and monthly hours chart"
+              caption="Widget"
+            />
+            <DeviceFrame
+              src={shotHeatmap}
+              alt="Heatmap showing clock-in time patterns with color intensity"
+              caption="Heatmap"
+            />
+          </div>
+        </div>
+
+        <div class="lo-table-wrap">
+          <table class="lo-table">
+            <caption>Free vs Pro</caption>
+            <thead>
+              <tr>
+                <th scope="col">Feature</th>
+                <th scope="col">Free</th>
+                <th scope="col">Pro</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                comparison.map((row) => (
+                  <tr>
+                    <th scope="row">{row.label}</th>
+                    <td>
+                      <span class="lo-mark" data-on={row.free}>
+                        {row.free ? '○' : '—'}
+                      </span>
+                      <span class="lo-sr">{row.free ? 'Included' : 'Not included'}</span>
+                    </td>
+                    <td>
+                      <span class="lo-mark" data-on="true">○</span>
+                      <span class="lo-sr">Included</span>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="lo-band lo-band--alt lo-privacy" aria-labelledby="lo-privacy-title">
+      <div class="lo-band__inner">
+        <div class="lo-privacy__head">
+          <span class="lo-privacy__icon">
+            <Icon name="lock" />
+          </span>
+          <h2 id="lo-privacy-title" class="lo-h2">Your data stays on your device.</h2>
+        </div>
+
+        <ul class="lo-checks">
+          {
+            privacyPoints.map((point) => (
+              <li>
+                <Icon name="check" />
+                <span>{point}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="lo-note">
+          Learn more in our <a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>.
+        </p>
+      </div>
+    </section>
+
+    <section class="lo-band lo-closing">
+      <div class="lo-band__inner">
+        <h2 class="lo-h2">{app.tagline}</h2>
+        <div class="lo-cta lo-cta--center">
+          {
+            app.appStoreUrl && (
+              <a class="lo-btn lo-btn--primary" href={app.appStoreUrl} rel="noopener">
+                <Icon name="apple" />
+                Get on the App Store
+              </a>
+            )
+          }
+        </div>
+        <p class="lo-note lo-note--fine">
+          Simple and easy to stick with. This app is not an employer-facing attendance service —
+          it is designed to help you build a personal habit.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="lo-footer">
+    <div class="lo-footer__inner">
+      <p class="lo-footer__brand">{app.name}</p>
+      <nav class="lo-footer__links" aria-label="Footer">
+        <a href={localizePath('', locale)}>Home</a>
+        <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
+        <a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>
+        <a href={localizePath(`${app.slug}/terms/`, locale)}>{t(locale, 'nav.terms')}</a>
+        <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+      </nav>
+      <LanguageSwitcher locale={locale} />
+      <p class="lo-footer__meta">&copy; {year} {site.operatorName}</p>
+    </div>
+  </footer>
+</BaseLayout>
