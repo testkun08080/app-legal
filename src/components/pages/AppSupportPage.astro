@@ -1,8 +1,10 @@
 ---
 import LegalLayout from '@/layouts/LegalLayout.astro';
 import { getSupportEmail } from '@/apps';
+import { getLegalDoc } from '@/lib/legal';
 import { localizedApp, localizePath, t, type Locale } from '@/i18n';
 import type { AppConfig } from '@/apps/types';
+import { render } from 'astro:content';
 
 interface Props {
   app: AppConfig;
@@ -12,9 +14,23 @@ interface Props {
 const { app: rawApp, locale } = Astro.props;
 const app = localizedApp(rawApp, locale);
 const supportEmail = getSupportEmail(rawApp);
+
+/**
+ * `src/content/legal/<slug>/<locale>/support.md` があれば、その内容を
+ * 問い合わせ先の下に差し込みます。無い場合は連絡先と法務リンクだけの共通ページです。
+ */
+const doc = await getLegalDoc(rawApp.slug, 'support', locale);
+const Content = doc ? (await render(doc)).Content : undefined;
 ---
 
-<LegalLayout title={t(locale, 'support.title')} app={app} rawApp={rawApp} currentPath="support" locale={locale}>
+<LegalLayout
+  title={t(locale, 'support.title')}
+  app={app}
+  rawApp={rawApp}
+  currentPath="support"
+  updated={doc?.data.updated}
+  locale={locale}
+>
   <p>{app.tagline}</p>
 
   <p>{t(locale, 'support.contactIntro', app.name)}</p>
@@ -24,6 +40,8 @@ const supportEmail = getSupportEmail(rawApp);
       <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
     </p>
   </div>
+
+  {Content && <Content />}
 
   <h2>{t(locale, 'support.legalDocs')}</h2>
   <ul>
