@@ -2,7 +2,9 @@ import { getCollection } from 'astro:content';
 import type { AppConfig } from '@/apps/types';
 import { defaultLocale, type Locale } from '@/config/i18n';
 
-export async function getLegalDoc(appSlug: string, docType: 'privacy' | 'terms', locale: Locale) {
+export type LegalDocType = 'privacy' | 'terms' | 'support';
+
+export async function getLegalDoc(appSlug: string, docType: LegalDocType, locale: Locale) {
   const docs = await getCollection('legal');
   const match = docs.find(
     (doc) => doc.data.appSlug === appSlug && doc.data.docType === docType && doc.data.locale === locale,

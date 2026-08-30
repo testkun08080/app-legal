@@ -1,31 +1,436 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 import { site } from '@/config/site';
+import { getSupportEmail } from '@/apps';
 import { defaultLocale } from '@/config/i18n';
 import { localizePath, t } from '@/i18n';
 import type { AppPageProps } from '@/apps/types';
+import Icon from './components/Icon.astro';
+import './theme.css';
+
+/**
+ * アイコンは photo-diary の iOS アイコン定義（`design/icon.icon/`）から起こしたものです。
+ * マークは `design/icon.icon/Assets/icontest.png.svg`、背景は `icon.json` の
+ * automatic-gradient（display-p3 0.99608 0.98824 0.96863）に合わせたクリームのグラデーションで、
+ * 1024×1024 に合成しています。`assets/icon.png` は Expo の既定アイコンのままなので使いません。
+ */
+import icon from '@/assets/shitagaki/icon.png';
 
 interface Props extends AppPageProps {}
 
 const { app, locale = defaultLocale } = Astro.props;
+const supportEmail = getSupportEmail(app);
+const year = new Date().getFullYear();
+
+const description =
+  '下書きは、旅先や日常の写真を見ながら話すだけで、AI が見出し付きの記事の下書きに整える iPhone アプリです。録音を止めずに写真をスワイプすると、話した内容が見ていた写真に自動で紐づきます。';
+
+const steps = [
+  {
+    title: '写真を選ぶ',
+    body: '記事に使う写真を選んで、ドラッグで並べ替えます。その並びがそのまま記事の流れになり、写真はあとから追加も削除もできます。',
+  },
+  {
+    title: '録りながらスワイプ',
+    body: '録音を止めずに横へスワイプすると、話した内容が見ていた写真に自動で振り分けられます。声が出しづらい場所では、キーボードでも入力できます。',
+  },
+  {
+    title: 'AI が構成をつくる',
+    body: '「旅日記っぽく」といった指示は任意です。省略すれば、AI がふさわしいと判断した構成を組み立てます。',
+  },
+  {
+    title: '並べ替えて書き出す',
+    body: '提案された構成カードをドラッグで並べ替え、記事表示と Markdown を見比べて仕上げます。完成した記事は Markdown / HTML / ZIP で書き出せます。',
+  },
+];
+
+const features = [
+  {
+    icon: 'mic',
+    title: '声でタイトルと構成',
+    body: 'タイトルも構成の指示も、話しかけるだけで入力できます。キーボード入力も併用できます。',
+  },
+  {
+    icon: 'swipe',
+    title: '録音とスワイプの自動紐づけ',
+    body: '一本の連続録音のまま写真を切り替えると、その時に話した内容が写真ごとに整理されます。',
+  },
+  {
+    icon: 'reorder',
+    title: '写真の並べ替え',
+    body: '選んだ写真をドラッグして並べ替え。並び順がそのまま記事の流れになります。',
+  },
+  {
+    icon: 'sparkles',
+    title: 'AI 構成生成',
+    body: '話した内容に撮影日時や地名も手がかりとして加え、見出しと本文の構成を提案します。',
+  },
+  {
+    icon: 'cards',
+    title: '構成カードの編集',
+    body: '提案された構成はカード単位で並べ替え・編集できます。納得いくまで組み直せます。',
+  },
+  {
+    icon: 'markdown',
+    title: '記事 / Markdown プレビュー',
+    body: '仕上がりの見た目と Markdown を切り替えながら確認できます。',
+  },
+  {
+    icon: 'share',
+    title: 'Markdown / HTML / ZIP 書き出し',
+    body: '画像を含めて書き出せるので、そのままブログ記事の下書きとして使えます。',
+  },
+  {
+    icon: 'image-settings',
+    title: '画像設定',
+    body: '書き出す画像の長辺サイズ・形式（JPEG / PNG）・品質を選べます。端末の元の写真はそのままです。',
+  },
+  {
+    icon: 'text',
+    title: 'プレビュー表示設定',
+    body: '本文フォント、文字サイズ、行間、見出しの下線などを好みに合わせて調整できます。',
+  },
+  {
+    icon: 'palette',
+    title: 'ライト / ダークとアクセント 6 色',
+    body: '端末の設定に合わせる、または手動で切り替え。アクセントカラーも 6 色から選べます。',
+  },
+  {
+    icon: 'search',
+    title: '検索とアーカイブ',
+    body: '下書きはキーワードで検索でき、書き終えたものはアーカイブに移して整理できます。',
+  },
+  {
+    icon: 'offline',
+    title: 'アカウント不要・オフライン',
+    body: 'サインインは要りません。AI 構成生成のとき以外は、通信がなくても使えます。',
+  },
+] as const;
+
+const plans = [
+  {
+    name: '無料',
+    featured: false,
+    price: '¥0',
+    unit: 'アカウント登録なし',
+    quota: 'AI 構成生成が通算 10 回',
+    points: [
+      '下書きの作成・録音・メモ・編集',
+      '構成カードの並べ替えとプレビュー',
+      '表示設定・テーマの変更',
+      '無料枠はリセットされない通算 10 回です',
+    ],
+  },
+  {
+    name: '書き出しプラン',
+    featured: false,
+    price: '¥980',
+    unit: '買い切り',
+    quota: 'Markdown / HTML / ZIP の書き出し',
+    points: [
+      '月額 ¥480 — 購読している間だけ書き出せます',
+      '年額 ¥3,980 — 初回のご購入で、以後ずっと書き出せます',
+      '買い切りなら一度のお支払いでずっと使えます',
+      'AI 構成生成の回数は無料枠のまま（通算 10 回）',
+    ],
+  },
+  {
+    name: 'AI Plus',
+    featured: true,
+    price: '¥980',
+    unit: '/ 月',
+    quota: 'AI 構成生成が毎月 50 回',
+    points: [
+      '年額 ¥7,800 でもご利用いただけます',
+      '購読中は書き出しも回数無制限で使えます',
+      '生成し直しも同じ月の枠から使えます',
+      'いつでも解約できます',
+    ],
+  },
+];
+
+const comparison = [
+  { label: '下書きの作成・録音・メモ', free: '○', exportPlan: '○', ai: '○' },
+  { label: '構成カードの編集・プレビュー', free: '○', exportPlan: '○', ai: '○' },
+  { label: 'AI 構成生成', free: '通算 10 回', exportPlan: '通算 10 回', ai: '毎月 50 回' },
+  { label: 'Markdown / HTML / ZIP 書き出し', free: '—', exportPlan: '○', ai: '○' },
+  { label: '画像設定・表示設定・テーマ', free: '○', exportPlan: '○', ai: '○' },
+  { label: '検索・アーカイブ', free: '○', exportPlan: '○', ai: '○' },
+  { label: '広告', free: 'なし', exportPlan: 'なし', ai: 'なし' },
+];
+
+const privacyPoints = [
+  'アカウント登録もサインインも不要です',
+  '写真・録音・メモ・下書きは、端末内にだけ保存されます',
+  '写真そのもの（画像ファイル）をサーバーへ送ることはありません',
+  'AI 構成生成を実行したときだけ、タイトル・メモ本文・撮影日時などのテキストを送ります',
+  '地名を送るかどうかは下書きごとにオフにできます（緯度経度は送りません）',
+  '位置情報の許可は求めません',
+  '広告は表示せず、広告目的のトラッキングも行いません',
+];
 ---
 
-<BaseLayout title={app.name} app={app} locale={locale} description={app.tagline}>
-  <div class="app-landing">
-    <main class="app-landing__main">
-      <h1 class="app-landing__name">{app.name}</h1>
-      <p class="app-landing__tagline">{app.tagline}</p>
-      <nav class="app-landing__links">
+<BaseLayout
+  title={app.name}
+  app={app}
+  locale={locale}
+  description={description}
+  ogImage={icon.src}
+>
+  <a class="sg-skip" href="#sg-main">本文へスキップ</a>
+
+  <header class="sg-nav">
+    <div class="sg-nav__inner">
+      <p class="sg-nav__brand">
+        <Image src={icon} alt="" width={32} height={32} loading="eager" />
+        <span>{app.name}</span>
+        <em>Draft</em>
+      </p>
+      <nav class="sg-nav__links" aria-label="ページ内リンク">
+        <a href="#sg-steps" data-optional>使い方</a>
+        <a href="#sg-features" data-optional>機能</a>
+        <a href="#sg-plans">プラン</a>
+        <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="sg-main">
+    <section class="sg-band sg-hero">
+      <div class="sg-band__inner sg-hero__inner">
+        <div class="sg-hero__copy">
+          <p class="sg-hero__badges">
+            <span class="sg-badge sg-badge--dot">App Store にて近日公開</span>
+          </p>
+          <h1 class="sg-h1">写真を見ながら、<br />話すだけ。</h1>
+          <p class="sg-lead">
+            旅先や日常の写真をスワイプしながら話すと、話した内容を AI
+            が見出し付きの記事の下書きに整えます。文章を書くのが得意でなくても、自分の言葉がそのまま記事になります。
+          </p>
+          <div class="sg-cta">
+            <a class="sg-btn sg-btn--primary" href="#sg-steps">
+              使い方を見る
+              <Icon name="chevron" />
+            </a>
+            <a class="sg-btn sg-btn--ghost" href={localizePath(`${app.slug}/support/`, locale)}>
+              {t(locale, 'nav.support')}
+              <Icon name="chevron" />
+            </a>
+          </div>
+          <p class="sg-hero__meta">iPhone / iPad に対応｜iOS 26 以降が必要です</p>
+        </div>
+
+        <div class="sg-hero__art">
+          <span class="sg-hero__glow" aria-hidden="true"></span>
+          <div class="sg-hero__tile">
+            <Image
+              src={icon}
+              alt="下書きのアプリアイコン"
+              widths={[240, 480, 720]}
+              sizes="(max-width: 900px) 52vw, 240px"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-band sg-band--surface" id="sg-steps" aria-labelledby="sg-steps-title">
+      <div class="sg-band__inner">
+        <div class="sg-head">
+          <p class="sg-eyebrow">使い方</p>
+          <h2 id="sg-steps-title" class="sg-h2">書こうとしなくていい。見て、話すだけ。</h2>
+          <p class="sg-sub">
+            録音を止めずに写真を切り替えるだけで、話した内容が写真ごとに整理されていきます。
+          </p>
+        </div>
+
+        <ol class="sg-steps">
+          {
+            steps.map((step) => (
+              <li class="sg-step">
+                <span class="sg-step__num" aria-hidden="true" />
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="sg-band sg-band--alt" id="sg-features" aria-labelledby="sg-features-title">
+      <div class="sg-band__inner">
+        <div class="sg-head">
+          <p class="sg-eyebrow">機能</p>
+          <h2 id="sg-features-title" class="sg-h2">話した言葉が、記事の形になるまで。</h2>
+        </div>
+
+        <ul class="sg-features">
+          {
+            features.map((feature) => (
+              <li class="sg-feature">
+                <span class="sg-feature__icon">
+                  <Icon name={feature.icon} />
+                </span>
+                <div class="sg-feature__text">
+                  <h3>{feature.title}</h3>
+                  <p>{feature.body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="sg-band sg-band--surface" id="sg-plans" aria-labelledby="sg-plans-title">
+      <div class="sg-band__inner">
+        <div class="sg-head">
+          <p class="sg-eyebrow">プラン</p>
+          <h2 id="sg-plans-title" class="sg-h2">まず無料で。書き出したくなったら、必要な分だけ。</h2>
+          <p class="sg-sub">
+            記事を書くところまでは無料で使えます。書き出しだけが必要なら買い切り、AI
+            を何度も使うなら AI Plus です。
+          </p>
+        </div>
+
+        <ul class="sg-plans">
+          {
+            plans.map((plan) => (
+              <li class="sg-plan" data-featured={plan.featured}>
+                <div class="sg-plan__head">
+                  <h3>{plan.name}</h3>
+                  {plan.featured && <span class="sg-badge">AI をよく使う方に</span>}
+                </div>
+                <p class="sg-plan__price">
+                  <strong>{plan.price}</strong>
+                  <span>{plan.unit}</span>
+                </p>
+                <p class="sg-plan__quota">{plan.quota}</p>
+                <ul class="sg-plan__list">
+                  {plan.points.map((point) => (
+                    <li>
+                      <Icon name="check" />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="sg-table-wrap">
+          <table class="sg-table">
+            <caption>プランごとにできること</caption>
+            <thead>
+              <tr>
+                <th scope="col">機能</th>
+                <th scope="col">無料</th>
+                <th scope="col">書き出しプラン</th>
+                <th scope="col">AI Plus</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                comparison.map((row) => (
+                  <tr>
+                    <th scope="row">{row.label}</th>
+                    <td>
+                      <span class="sg-mark" data-on={row.free === '○'}>
+                        {row.free}
+                      </span>
+                      {row.free === '—' && <span class="sg-sr">利用できません</span>}
+                    </td>
+                    <td>
+                      <span class="sg-mark" data-on={row.exportPlan === '○'}>
+                        {row.exportPlan}
+                      </span>
+                      {row.exportPlan === '—' && <span class="sg-sr">利用できません</span>}
+                    </td>
+                    <td>
+                      <span class="sg-mark" data-on={row.ai === '○'}>
+                        {row.ai}
+                      </span>
+                      {row.ai === '—' && <span class="sg-sr">利用できません</span>}
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <p class="sg-note sg-note--fine">
+          書き出しプランの月額・年額と AI Plus
+          は自動更新サブスクリプションです。無料トライアルはありません。期間終了の 24
+          時間以上前に解約しない限り自動更新されます。購入・更新・解約・復元は App Store
+          経由で行われ、解約は「設定 &gt; Apple ID &gt;
+          サブスクリプション」から行えます。買い切りと年額の書き出しプランは、初回のご購入で以後も書き出しをご利用いただけます。AI
+          Plus の月あたりの回数は暦月ごとにリセットされます。掲載している価格は日本ストアの予定価格で、実際の価格は
+          App Store に表示される金額が正となります。
+        </p>
+      </div>
+    </section>
+
+    <section class="sg-band sg-band--alt sg-privacy" aria-labelledby="sg-privacy-title">
+      <div class="sg-band__inner">
+        <div class="sg-privacy__head">
+          <span class="sg-privacy__icon">
+            <Icon name="lock" />
+          </span>
+          <h2 id="sg-privacy-title" class="sg-h2">写真も、声も、端末の中に。</h2>
+        </div>
+
+        <ul class="sg-checks">
+          {
+            privacyPoints.map((point) => (
+              <li>
+                <Icon name="check" />
+                <span>{point}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="sg-note">
+          詳しくは<a href={localizePath(`${app.slug}/privacy/`, locale)}
+            >{t(locale, 'nav.privacy')}</a
+          >をご覧ください。
+        </p>
+      </div>
+    </section>
+
+    <section class="sg-band sg-closing">
+      <div class="sg-band__inner">
+        <h2 class="sg-h2">{app.tagline}</h2>
+        <p class="sg-sub">思い出が薄れないうちに、その日のうちに話しておく。</p>
+        <div class="sg-cta sg-cta--center">
+          <span class="sg-badge sg-badge--dot">App Store にて近日公開</span>
+        </div>
+        <p class="sg-note sg-note--fine">
+          構成や本文は AI が生成したものです。公開・共有する前に、内容をご自身でご確認ください。
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="sg-footer">
+    <div class="sg-footer__inner">
+      <p class="sg-footer__brand">{app.name}</p>
+      <nav class="sg-footer__links" aria-label="フッター">
+        <a href={localizePath('', locale)}>ホーム</a>
         <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
         <a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>
         <a href={localizePath(`${app.slug}/terms/`, locale)}>{t(locale, 'nav.terms')}</a>
+        <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
       </nav>
-    </main>
-
-    <footer class="app-landing__footer">
       <LanguageSwitcher locale={locale} />
-      <p>&copy; {new Date().getFullYear()} {site.operatorName}</p>
-    </footer>
-  </div>
+      <p class="sg-footer__meta">&copy; {year} {site.operatorName}</p>
+    </div>
+  </footer>
 </BaseLayout>

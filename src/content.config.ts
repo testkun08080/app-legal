@@ -7,7 +7,7 @@ const legal = defineCollection({
   schema: z.object({
     title: z.string(),
     appSlug: z.string(),
-    docType: z.enum(['privacy', 'terms']),
+    docType: z.enum(['privacy', 'terms', 'support']),
     locale: z.enum(['ja', 'en']).default('ja'),
     updated: z.coerce.date(),
   }),
