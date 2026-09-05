@@ -26,6 +26,8 @@ export type AppConfig = {
   darkTheme?: AppTheme;
   /** App Store の配信 URL。未指定ならダウンロード導線を出しません */
   appStoreUrl?: string;
+  /** 配信中のアプリバージョン。指定するとランディングと更新履歴に表示します */
+  version?: string;
 };
 
 export type ResolvedAppConfig = Omit<AppConfig, 'name' | 'tagline'> & {

@@ -6,6 +6,7 @@ export const ui = {
       support: 'サポート',
       privacy: 'プライバシーポリシー',
       terms: '利用規約',
+      updates: '更新履歴',
     },
     hub: {
       title: 'アプリ一覧',
@@ -39,6 +40,7 @@ export const ui = {
       support: 'Support',
       privacy: 'Privacy Policy',
       terms: 'Terms of Use',
+      updates: 'Changelog',
     },
     hub: {
       title: 'Apps',

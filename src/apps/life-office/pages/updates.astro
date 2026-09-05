@@ -1,0 +1,145 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import { site } from '@/config/site';
+import { getSupportEmail } from '@/apps';
+import { defaultLocale } from '@/config/i18n';
+import { formatDate, localizePath, localizedApp, t } from '@/i18n';
+import type { AppConfig } from '@/apps/types';
+import type { Locale } from '@/config/i18n';
+import Icon from '../components/Icon.astro';
+import { releases } from '../releases';
+import '../theme.css';
+
+import icon from '@/assets/life-office/icon.png';
+
+interface Props {
+  app: AppConfig;
+  locale?: Locale;
+}
+
+// [...slug].astro は生の AppConfig を渡すため、ここでロケール解決する
+const { app: rawApp, locale = defaultLocale } = Astro.props;
+const app = localizedApp(rawApp, locale);
+const supportEmail = getSupportEmail(rawApp);
+const year = new Date().getFullYear();
+
+const copy = {
+  ja: {
+    skip: '本文へスキップ',
+    eyebrow: '更新履歴',
+    heading: 'これまでのアップデート。',
+    sub: 'App Store で配信したバージョンの主な変更点です。',
+    latest: '最新',
+    current: (version: string) => `現在配信中のバージョンは v${version} です。`,
+    storeNote: 'アップデートは App Store から入手できます。',
+    storeCtaSuffix: ' で入手',
+    home: 'ホーム',
+    appPage: 'アプリページ',
+    footerNav: 'フッター',
+  },
+  en: {
+    skip: 'Skip to content',
+    eyebrow: 'Changelog',
+    heading: 'What has changed so far.',
+    sub: 'Highlights from each version released on the App Store.',
+    latest: 'Latest',
+    current: (version: string) => `The current release is v${version}.`,
+    storeNote: 'Updates are available from the App Store.',
+    storeCtaSuffix: ' — Get',
+    home: 'Home',
+    appPage: 'App page',
+    footerNav: 'Footer',
+  },
+} satisfies Record<Locale, unknown>;
+
+const c = copy[locale];
+const landingPath = localizePath(`${app.slug}/`, locale);
+---
+
+<BaseLayout
+  title={t(locale, 'nav.updates')}
+  app={rawApp}
+  locale={locale}
+  description={`${app.name} — ${c.sub}`}
+  ogImage={icon.src}
+>
+  <a class="lo-skip" href="#lo-main">{c.skip}</a>
+
+  <header class="lo-nav">
+    <div class="lo-nav__inner">
+      <a class="lo-nav__brand" href={landingPath}>
+        <Image src={icon} alt="" width={32} height={32} loading="eager" />
+        <span>{app.name}</span>
+      </a>
+      {
+        app.appStoreUrl && (
+          <a class="lo-btn lo-btn--primary lo-btn--sm" href={app.appStoreUrl} rel="noopener">
+            <Icon name="apple" />
+            <span>App Store<span class="lo-nav__cta-suffix">{c.storeCtaSuffix}</span></span>
+          </a>
+        )
+      }
+    </div>
+  </header>
+
+  <main id="lo-main">
+    <section class="lo-band lo-band--surface" aria-labelledby="lo-updates-title">
+      <div class="lo-band__inner">
+        <div class="lo-head">
+          <p class="lo-eyebrow">{c.eyebrow}</p>
+          <h1 id="lo-updates-title" class="lo-h2">{c.heading}</h1>
+          <p class="lo-sub">{c.sub}</p>
+          {app.version && <p class="lo-note">{c.current(app.version)}</p>}
+        </div>
+
+        <ol class="lo-releases">
+          {
+            releases.map((release, index) => (
+              <li class="lo-release">
+                <div class="lo-release__head">
+                  <h2 class="lo-release__version">
+                    v{release.version}
+                    {index === 0 && <span class="lo-release__badge">{c.latest}</span>}
+                  </h2>
+                  <p class="lo-release__date">
+                    <time datetime={release.date}>
+                      {formatDate(new Date(`${release.date}T00:00:00`), locale)}
+                    </time>
+                  </p>
+                </div>
+                <ul class="lo-checks lo-release__items">
+                  {release.highlights[locale].map((item) => (
+                    <li>
+                      <Icon name="check" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))
+          }
+        </ol>
+
+        <p class="lo-note lo-note--fine">{c.storeNote}</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="lo-footer">
+    <div class="lo-footer__inner">
+      <p class="lo-footer__brand">{app.name}</p>
+      <nav class="lo-footer__links" aria-label={c.footerNav}>
+        <a href={localizePath('', locale)}>{c.home}</a>
+        <a href={landingPath}>{c.appPage}</a>
+        <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
+        <a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>
+        <a href={localizePath(`${app.slug}/terms/`, locale)}>{t(locale, 'nav.terms')}</a>
+        <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+      </nav>
+      <LanguageSwitcher locale={locale} />
+      <p class="lo-footer__meta">&copy; {year} {site.operatorName}</p>
+    </div>
+  </footer>
+</BaseLayout>

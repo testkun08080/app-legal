@@ -3,7 +3,7 @@ title: Terms of Use
 appSlug: life-office
 docType: terms
 locale: en
-updated: 2026-08-28
+updated: 2026-09-05
 ---
 
 ## 1. Scope
@@ -18,7 +18,9 @@ The App is a personal tool for recording clock-in and clock-out as a daily ritua
 
 - LIFE OFFICE Pro is a **one-time (non-consumable)** in-app purchase (¥600)
 - Pro unlocks the following features:
+  - No ads (the banner ads shown on the free plan are removed)
   - Home screen widget
+  - Manual light / dark theme switching
   - Extended statistics (weekly summaries and heatmap)
   - Note search (full-text, date, and clock-out comment filters)
   - CSV/PDF export and CSV import
