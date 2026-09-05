@@ -3,7 +3,7 @@ title: プライバシーポリシー
 appSlug: life-office
 docType: privacy
 locale: ja
-updated: 2026-08-28
+updated: 2026-09-05
 ---
 
 ## 1. はじめに
@@ -28,11 +28,13 @@ LIFE OFFICE（以下「本アプリ」）は、ユーザーのプライバシー
 | サービス | 目的 | 提供者 |
 |----------|------|--------|
 | RevenueCat / Apple App Store | App 内課金の処理・購入状態の確認 | RevenueCat, Inc. / Apple Inc. |
+| Google AdMob | 無料プランでのバナー広告の配信 | Google LLC |
 
-購入処理に必要な情報は Apple および RevenueCat のプライバシーポリシーに従います。
+購入処理に必要な情報は Apple および RevenueCat のプライバシーポリシーに従います。広告の配信にあたって Google が取得する情報は Google のプライバシーポリシーに従います。
 
 - Apple: https://www.apple.com/legal/privacy/
 - RevenueCat: https://www.revenuecat.com/privacy
+- Google: https://policies.google.com/privacy
 
 ## 4. 端末の権限
 
@@ -42,9 +44,18 @@ LIFE OFFICE（以下「本アプリ」）は、ユーザーのプライバシー
 - **モーション**: 振り打刻の検知
 - **写真ライブラリ**: 打刻レシートの保存
 
-## 5. トラッキング
+## 5. 広告とトラッキング
 
-本アプリは広告目的のトラッキングを行いません。App Tracking Transparency（ATT）は使用しません。
+無料プランでは、Google AdMob によるバナー広告を表示します。
+
+- 表示する画面: 記録・検索・設定の各タブ（タブバー直上）、記録リストの途中、および打刻レシート画面のレシートカードの外側
+- 広告を表示しない画面: 出勤タブ、打刻のシーケンス、オンボーディング、Pro の購入画面
+- 写真に保存・共有した打刻レシートの画像に広告が入ることはありません
+- **LIFE OFFICE Pro** を購入すると、アプリ内のバナー広告は表示されなくなります
+
+広告は**非パーソナライズ広告のみ**を配信します。本アプリは広告目的のトラッキングを行わず、App Tracking Transparency（ATT）の許可を求めるダイアログを表示しません。広告 ID（IDFA）も利用しません。
+
+なお、非パーソナライズ広告であっても、広告の配信・不正防止・表示回数の集計のために、IP アドレスやおおまかな地域、端末の種類といった情報が Google に送信されます。詳細は上記の Google のプライバシーポリシーをご確認ください。
 
 ## 6. データの削除
 

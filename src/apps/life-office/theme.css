@@ -882,3 +882,65 @@
     scroll-snap-type: none;
   }
 }
+
+/* ---------- 更新履歴 ---------- */
+
+.lo-releases {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.lo-release {
+  padding: clamp(1.25rem, 3.5vw, 1.875rem);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--lo-radius);
+  box-shadow: var(--lo-shadow);
+}
+
+.lo-release__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.lo-release__version {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.lo-release__badge {
+  padding: 0.125rem 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: var(--lo-tint);
+  border-radius: 999px;
+}
+
+.lo-release__date {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.lo-releases .lo-release__items {
+  max-width: none;
+  margin-top: 1rem;
+}

@@ -82,13 +82,18 @@ const features = [
   { icon: 'chart', title: '月次統計', body: 'その月の出勤を集計して表示します。' },
   { icon: 'bell', title: 'リマインダー', body: '指定時刻に打刻をお知らせします。' },
   {
-    icon: 'theme',
-    title: 'ライト / ダークテーマ',
-    body: 'システムに合わせる、または手動で切り替えられます。',
+    icon: 'note',
+    title: '日本語 / 英語',
+    body: '端末の言語に追従します。設定からいつでも切り替えられます。',
   },
 ] as const;
 
 const proFeatures = [
+  {
+    icon: 'noAds',
+    title: '広告の非表示',
+    body: 'アプリ内のバナー広告がすべて消えます。購入直後から、画面を切り替えずに反映。',
+  },
   {
     icon: 'widget',
     title: 'ホーム画面ウィジェット',
@@ -109,15 +114,21 @@ const proFeatures = [
     title: 'CSV / PDF',
     body: '月・年・期間指定で書き出し（複数月は ZIP）。CSV からの取り込みにも対応。',
   },
+  {
+    icon: 'theme',
+    title: 'ライト / ダークテーマ',
+    body: 'システム追従に加えて、ライト・ダークを手動で選べます。',
+  },
 ] as const;
 
 const comparison = [
+  { label: '広告の非表示', free: false },
   { label: 'スワイプ打刻・振り打刻・後打刻', free: true },
   { label: '出勤前メモ / 退勤コメント', free: true },
   { label: 'レシート表示・写真保存・共有', free: true },
   { label: '記録一覧・カレンダー・月次統計', free: true },
   { label: '目標時刻・勤務曜日・毎日のリマインダー', free: true },
-  { label: 'ライト / ダークテーマ', free: true },
+  { label: 'ライト / ダークテーマの手動切り替え', free: false },
   { label: 'ホーム画面ウィジェット', free: false },
   { label: '拡張統計（週次・ヒートマップ）', free: false },
   { label: 'メモ検索', free: false },
@@ -128,9 +139,9 @@ const comparison = [
 const privacyPoints = [
   'アカウント登録は不要です',
   '打刻記録は端末内の SQLite にだけ保存されます',
-  '当方のサーバーへ送信されるデータはありません',
+  '打刻データが当方のサーバーへ送信されることはありません',
   'オフラインでも使えます',
-  '広告目的のトラッキングは行いません',
+  '広告は非パーソナライズのみ。トラッキング許可（ATT）は求めません',
 ];
 ---
 
@@ -183,7 +194,9 @@ const privacyPoints = [
               <Icon name="chevron" />
             </a>
           </div>
-          <p class="lo-hero__meta">iPhone / iPad に対応｜iOS 16.0 以降が必要です</p>
+          <p class="lo-hero__meta">
+            iPhone / iPad に対応｜iOS 16.0 以降が必要です{app.version && `｜v${app.version}`}
+          </p>
         </div>
 
         <div class="lo-hero__art">
@@ -241,6 +254,10 @@ const privacyPoints = [
         <div class="lo-head">
           <p class="lo-eyebrow">無料でできること</p>
           <h2 id="lo-features-title" class="lo-h2">便利な機能で、毎日をもっと快適に。</h2>
+          <p class="lo-sub">
+            無料プランでは、記録・検索・設定とレシート画面にバナー広告が表示されます。
+            出勤タブと打刻の儀式には広告を出しません。Pro を購入すると広告は表示されなくなります。
+          </p>
         </div>
 
         <ul class="lo-features">
@@ -390,6 +407,7 @@ const privacyPoints = [
       <p class="lo-footer__brand">{app.name}</p>
       <nav class="lo-footer__links" aria-label="フッター">
         <a href={localizePath('', locale)}>ホーム</a>
+        <a href={localizePath(`${app.slug}/updates/`, locale)}>{t(locale, 'nav.updates')}</a>
         <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
         <a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>
         <a href={localizePath(`${app.slug}/terms/`, locale)}>{t(locale, 'nav.terms')}</a>

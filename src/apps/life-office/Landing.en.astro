@@ -81,13 +81,18 @@ const features = [
   { icon: 'chart', title: 'Monthly stats', body: 'Summarize and display your attendance for the month.' },
   { icon: 'bell', title: 'Reminders', body: 'Get notified to punch at your chosen time.' },
   {
-    icon: 'theme',
-    title: 'Light / dark theme',
-    body: 'Follow system settings or switch manually.',
+    icon: 'note',
+    title: 'Japanese / English',
+    body: 'Follows your device language. Switch anytime in Settings.',
   },
 ] as const;
 
 const proFeatures = [
+  {
+    icon: 'noAds',
+    title: 'No ads',
+    body: 'Removes every banner in the app, right after purchase — no need to change screens.',
+  },
   {
     icon: 'widget',
     title: 'Home screen widget',
@@ -108,15 +113,21 @@ const proFeatures = [
     title: 'CSV / PDF',
     body: 'Export by month, year, or custom range (multi-month as ZIP). Import from CSV too.',
   },
+  {
+    icon: 'theme',
+    title: 'Light / dark theme',
+    body: 'Pick light or dark manually, on top of following the system.',
+  },
 ] as const;
 
 const comparison = [
+  { label: 'No ads', free: false },
   { label: 'Swipe / shake / retroactive punch', free: true },
   { label: 'Pre-clock-in notes / clock-out comments', free: true },
   { label: 'Receipt view, photo save & share', free: true },
   { label: 'Record list, calendar & monthly stats', free: true },
   { label: 'Target time, work days & daily reminders', free: true },
-  { label: 'Light / dark theme', free: true },
+  { label: 'Manual light / dark theme switching', free: false },
   { label: 'Home screen widget', free: false },
   { label: 'Extended stats (weekly & heatmap)', free: false },
   { label: 'Note search', free: false },
@@ -127,9 +138,9 @@ const comparison = [
 const privacyPoints = [
   'No account registration required',
   'Punch records are stored only in on-device SQLite',
-  'No data is sent to our servers',
+  'Your punch data is never sent to our servers',
   'Works offline',
-  'No advertising tracking',
+  'Non-personalized ads only — no App Tracking Transparency prompt',
 ];
 ---
 
@@ -182,7 +193,9 @@ const privacyPoints = [
               <Icon name="chevron" />
             </a>
           </div>
-          <p class="lo-hero__meta">For iPhone / iPad · Requires iOS 16.0 or later</p>
+          <p class="lo-hero__meta">
+            For iPhone / iPad · Requires iOS 16.0 or later{app.version && ` · v${app.version}`}
+          </p>
         </div>
 
         <div class="lo-hero__art">
@@ -240,6 +253,11 @@ const privacyPoints = [
         <div class="lo-head">
           <p class="lo-eyebrow">Free features</p>
           <h2 id="lo-features-title" class="lo-h2">Handy tools for a smoother daily routine.</h2>
+          <p class="lo-sub">
+            On the free plan, banner ads appear on Records, Search, Settings, and the receipt
+            screen. There are no ads on the home punch tab or during the punch ritual, and
+            LIFE OFFICE Pro removes them entirely.
+          </p>
         </div>
 
         <ul class="lo-features">
@@ -389,6 +407,7 @@ const privacyPoints = [
       <p class="lo-footer__brand">{app.name}</p>
       <nav class="lo-footer__links" aria-label="Footer">
         <a href={localizePath('', locale)}>Home</a>
+        <a href={localizePath(`${app.slug}/updates/`, locale)}>{t(locale, 'nav.updates')}</a>
         <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
         <a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>
         <a href={localizePath(`${app.slug}/terms/`, locale)}>{t(locale, 'nav.terms')}</a>

@@ -3,7 +3,7 @@ title: Privacy Policy
 appSlug: life-office
 docType: privacy
 locale: en
-updated: 2026-08-28
+updated: 2026-09-05
 ---
 
 ## 1. Introduction
@@ -28,11 +28,13 @@ Punch receipt barcodes are **generated on your device** from your profile name a
 | Service | Purpose | Provider |
 |---------|---------|----------|
 | RevenueCat / Apple App Store | In-app purchase processing and purchase status verification | RevenueCat, Inc. / Apple Inc. |
+| Google AdMob | Serving banner ads on the free plan | Google LLC |
 
-Information required for purchases is handled according to Apple and RevenueCat privacy policies:
+Information required for purchases is handled according to Apple and RevenueCat privacy policies. Information Google receives in order to serve ads is handled according to Google's privacy policy.
 
 - Apple: https://www.apple.com/legal/privacy/
 - RevenueCat: https://www.revenuecat.com/privacy
+- Google: https://policies.google.com/privacy
 
 ## 4. Device Permissions
 
@@ -42,9 +44,18 @@ The App may request the following permissions:
 - **Motion**: Shake-to-punch detection
 - **Photo Library**: Saving punch receipts
 
-## 5. Tracking
+## 5. Advertising and Tracking
 
-The App does not perform advertising tracking. App Tracking Transparency (ATT) is not used.
+On the free plan, the App shows banner ads served by Google AdMob.
+
+- Where ads appear: the Records, Search, and Settings tabs (just above the tab bar), within the record list, and on the punch receipt screen outside the receipt card
+- Where ads never appear: the home punch tab, the punch sequence, onboarding, and the Pro purchase screen
+- Receipt images you save to Photos or share never contain an ad
+- Purchasing **LIFE OFFICE Pro** removes all banner ads from the App
+
+Only **non-personalized ads** are served. The App does not perform advertising tracking, does not show an App Tracking Transparency (ATT) prompt, and does not use the advertising identifier (IDFA).
+
+Even for non-personalized ads, information such as your IP address, coarse location, and device type is sent to Google in order to serve ads, prevent fraud, and count impressions. See Google's privacy policy linked above for details.
 
 ## 6. Data Deletion
 
