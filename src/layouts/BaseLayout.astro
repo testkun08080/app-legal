@@ -13,9 +13,13 @@ interface Props {
   description?: string;
   /** OGP 画像の URL（省略時はアプリアイコン／サイト既定） */
   ogImage?: string;
+  /** schema.org SoftwareApplication の applicationCategory（省略時は ProductivityApplication） */
+  schemaCategory?: string;
+  /** true のとき、かつ app.appStoreUrl があるとき、SoftwareApplication の構造化データを出力する */
+  isAppHome?: boolean;
 }
 
-const { title, app, locale = defaultLocale, description, ogImage } = Astro.props;
+const { title, app, locale = defaultLocale, description, ogImage, schemaCategory, isAppHome } = Astro.props;
 const appName = app ? resolveLocalized(app.name, locale) : undefined;
 const pageTitle = app && title !== appName ? `${title} — ${appName}` : title;
 const pageDescription =
@@ -25,6 +29,28 @@ const canonical = new URL(Astro.url.pathname, site.publicBaseUrl).href;
 const ogImageUrl = ogImage ? new URL(ogImage, site.publicBaseUrl).href : undefined;
 const themeCss = app ? themeToCss(app.slug, app.theme, app.darkTheme) : undefined;
 const alternateUrls = getAlternateUrls(Astro.url.pathname, locale);
+
+// アプリの配信ページ（トップ）にのみ SoftwareApplication の構造化データを付与する。
+// 配信 URL が未設定＝未公開アプリなので、公開前のページには出さない。
+const softwareAppJsonLd =
+  isAppHome && app && app.appStoreUrl
+    ? JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: appName,
+        operatingSystem: 'iOS',
+        applicationCategory: schemaCategory ?? 'ProductivityApplication',
+        url: canonical,
+        ...(ogImageUrl ? { image: ogImageUrl } : {}),
+        ...(app.version ? { softwareVersion: app.version } : {}),
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'JPY',
+          url: app.appStoreUrl,
+        },
+      })
+    : undefined;
 ---
 
 <!doctype html>
@@ -53,6 +79,8 @@ const alternateUrls = getAlternateUrls(Astro.url.pathname, locale);
     <meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />
     {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
     {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+
+    {softwareAppJsonLd && <script type="application/ld+json" set:html={softwareAppJsonLd} />}
 
     {themeCss && <style is:inline set:html={themeCss} />}
   </head>
