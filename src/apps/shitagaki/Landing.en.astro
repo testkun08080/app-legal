@@ -1,0 +1,513 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import { site } from '@/config/site';
+import { getSupportEmail } from '@/apps';
+import { localizePath, t } from '@/i18n';
+import type { AppPageProps } from '@/apps/types';
+import Icon from './components/Icon.astro';
+import './theme.css';
+
+/** 日本語版（`Landing.astro`）の対訳。構成・クラス名は同じに保っています。 */
+import icon from '@/assets/shitagaki/icon.png';
+
+interface Props extends AppPageProps {}
+
+const { app, locale = 'en' } = Astro.props;
+const supportEmail = getSupportEmail(app);
+const year = new Date().getFullYear();
+
+const description =
+  'Draft is an iPhone and iPad app that turns your travel and everyday photos into a draft article with headings — you look at them and talk, and AI does the shaping. Swipe between photos without stopping the recording and what you said is filed under the photo you were looking at. Export as Markdown, HTML or ZIP. No account needed, free on the App Store.';
+
+const faqs = [
+  {
+    q: 'Is Draft free to use?',
+    a: 'Yes. Creating drafts, recording, memos, editing the outline and previewing have no limits. Only AI outline generation has a free quota of 10 runs in total, and exporting needs either the export plan or AI Plus.',
+  },
+  {
+    q: 'Are my photos and recordings sent to a server?',
+    a: 'No. Photos, recordings and memos are stored only on your device. Only when you run AI outline generation is text sent — the title, the memo text and the capture time. Photo files themselves are never sent.',
+  },
+  {
+    q: 'Does it work offline?',
+    a: 'Everything except AI outline generation works offline. Picking photos, recording, transcription, editing memos and previewing all happen without a connection.',
+  },
+  {
+    q: 'Can I paste the exported article straight into my blog?',
+    a: 'Export as Markdown, HTML or ZIP. The ZIP includes the images, so it carries over to a blog post as a finished draft.',
+  },
+  {
+    q: 'Which devices and iOS versions are supported?',
+    a: 'iPhone and iPad running iOS 26 or later. Transcription runs on the device using the speech recognition introduced in iOS 26.',
+  },
+] as const;
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: { '@type': 'Answer', text: faq.a },
+  })),
+});
+
+const steps = [
+  {
+    title: 'Pick your photos',
+    body: 'Choose the photos for the article and drag them into order. That order becomes the flow of the article, and photos can be added or removed later.',
+  },
+  {
+    title: 'Swipe while recording',
+    body: 'Swipe sideways without stopping the recording and what you say is filed automatically under the photo you were looking at. Where talking is awkward, type instead.',
+  },
+  {
+    title: 'AI builds the outline',
+    body: 'Instructions like “make it read like a travel diary” are optional. Leave them out and the AI decides on a structure that fits.',
+  },
+  {
+    title: 'Reorder and export',
+    body: 'Drag the suggested outline cards into order, then compare the article view against the Markdown to finish it off. Export as Markdown, HTML or ZIP.',
+  },
+];
+
+const features = [
+  {
+    icon: 'mic',
+    title: 'Speak the title and the outline',
+    body: 'The title and the outline instructions can both be spoken. Typing works alongside it.',
+  },
+  {
+    icon: 'swipe',
+    title: 'Recording and swiping, matched up',
+    body: 'Switch photos during one continuous recording and what you said at the time is organised per photo.',
+  },
+  {
+    icon: 'reorder',
+    title: 'Reorder photos',
+    body: 'Drag the photos you picked into order. That order is the flow of the article.',
+  },
+  {
+    icon: 'sparkles',
+    title: 'AI outline generation',
+    body: 'Capture times and place names join what you said as hints, and the AI proposes headings and body text.',
+  },
+  {
+    icon: 'cards',
+    title: 'Edit the outline cards',
+    body: 'The proposed outline can be reordered and edited card by card, as many times as it takes.',
+  },
+  {
+    icon: 'markdown',
+    title: 'Article / Markdown preview',
+    body: 'Switch between how it will look and the Markdown behind it.',
+  },
+  {
+    icon: 'share',
+    title: 'Markdown / HTML / ZIP export',
+    body: 'Images are included, so the export drops straight into a blog post as a draft.',
+  },
+  {
+    icon: 'image-settings',
+    title: 'Image settings',
+    body: 'Choose the long-edge size, the format (JPEG / PNG) and the quality of exported images. The originals on your device stay as they are.',
+  },
+  {
+    icon: 'text',
+    title: 'Preview settings',
+    body: 'Body font, text size, line height and heading underlines are all adjustable.',
+  },
+  {
+    icon: 'palette',
+    title: 'Light / dark and six accent colors',
+    body: 'Follow the device setting or switch by hand. Six accent colors to choose from.',
+  },
+  {
+    icon: 'search',
+    title: 'Search and archive',
+    body: 'Drafts are searchable by keyword, and the ones you have finished can be moved to the archive.',
+  },
+  {
+    icon: 'offline',
+    title: 'No account, works offline',
+    body: 'No sign-in. Apart from AI outline generation, it works without a connection.',
+  },
+] as const;
+
+const plans = [
+  {
+    name: 'Free',
+    featured: false,
+    price: '¥0',
+    unit: 'no account needed',
+    quota: '10 AI outline generations in total',
+    points: [
+      'Creating drafts, recording, memos, editing',
+      'Reordering the outline cards and previewing',
+      'Display settings and themes',
+      'The free quota is 10 runs in total and never resets',
+    ],
+  },
+  {
+    name: 'Export plan',
+    featured: false,
+    price: '¥980',
+    unit: 'one-time',
+    quota: 'Markdown / HTML / ZIP export',
+    points: [
+      '¥480 a month — export while subscribed',
+      '¥3,980 a year — the initial purchase keeps exporting available',
+      'One payment, yours for good',
+      'AI outline generation stays on the free quota (10 in total)',
+    ],
+  },
+  {
+    name: 'AI Plus',
+    featured: true,
+    price: '¥980',
+    unit: '/ month',
+    quota: '50 AI outline generations a month',
+    points: [
+      'Also available at ¥7,800 a year',
+      'Unlimited exporting while subscribed',
+      'Regenerating draws on the same monthly allowance',
+      'Cancel any time',
+    ],
+  },
+];
+
+const comparison = [
+  { label: 'Creating drafts, recording, memos', free: '✓', exportPlan: '✓', ai: '✓' },
+  { label: 'Editing the outline cards, previewing', free: '✓', exportPlan: '✓', ai: '✓' },
+  { label: 'AI outline generation', free: '10 in total', exportPlan: '10 in total', ai: '50 a month' },
+  { label: 'Markdown / HTML / ZIP export', free: '—', exportPlan: '✓', ai: '✓' },
+  { label: 'Image, display and theme settings', free: '✓', exportPlan: '✓', ai: '✓' },
+  { label: 'Search and archive', free: '✓', exportPlan: '✓', ai: '✓' },
+  { label: 'Ads', free: 'none', exportPlan: 'none', ai: 'none' },
+];
+
+const privacyPoints = [
+  'No account and no sign-in',
+  'Photos, recordings, memos and drafts are stored only on your device',
+  'Photo files themselves are never sent to a server',
+  'Only when you run AI outline generation is text sent — the title, the memo text, the capture time',
+  'Whether the place name is sent can be turned off per draft (coordinates are never sent)',
+  'Location permission is never requested',
+  'No ads, and no tracking for advertising',
+];
+---
+
+<BaseLayout
+  title="Turn your photos into a draft article just by talking"
+  app={app}
+  locale={locale}
+  description={description}
+  ogImage={icon.src}
+  schemaCategory="LifestyleApplication"
+  isAppHome
+>
+  <a class="sg-skip" href="#sg-main">Skip to content</a>
+
+  <header class="sg-nav">
+    <div class="sg-nav__inner">
+      <p class="sg-nav__brand">
+        <Image src={icon} alt="" width={32} height={32} loading="eager" />
+        <span>{app.name}</span>
+        <em>下書き</em>
+      </p>
+      <nav class="sg-nav__links" aria-label="On this page">
+        <a href="#sg-steps" data-optional>How it works</a>
+        <a href="#sg-features" data-optional>Features</a>
+        <a href="#sg-faq" data-optional>FAQ</a>
+        <a href="#sg-plans">Plans</a>
+        <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
+        {
+          app.appStoreUrl && (
+            <a class="sg-btn sg-btn--primary sg-btn--sm" href={app.appStoreUrl} rel="noopener">
+              <Icon name="apple" />
+              <span>
+                App Store<span class="sg-nav__cta-suffix"> download</span>
+              </span>
+            </a>
+          )
+        }
+      </nav>
+    </div>
+  </header>
+
+  <main id="sg-main">
+    <section class="sg-band sg-hero">
+      <div class="sg-band__inner sg-hero__inner">
+        <div class="sg-hero__copy">
+          <p class="sg-hero__badges">
+            <span class="sg-badge sg-badge--dot">Out now on the App Store</span>
+          </p>
+          <h1 class="sg-h1">Look at your photos.<br />Just talk.</h1>
+          <p class="sg-lead">
+            Swipe through your travel and everyday photos while you talk, and AI shapes what you
+            said into a draft article with headings. Even if writing is not your thing, your own
+            words become the article.
+          </p>
+          <div class="sg-cta">
+            {
+              app.appStoreUrl && (
+                <a class="sg-btn sg-btn--primary" href={app.appStoreUrl} rel="noopener">
+                  <Icon name="apple" />
+                  Download on the App Store
+                </a>
+              )
+            }
+            <a class="sg-btn sg-btn--ghost" href="#sg-steps">
+              See how it works
+              <Icon name="chevron" />
+            </a>
+          </div>
+          <p class="sg-hero__meta">
+            iPhone / iPad — iOS 26 or later{app.version && ` — v${app.version}`}
+          </p>
+        </div>
+
+        <div class="sg-hero__art">
+          <span class="sg-hero__glow" aria-hidden="true"></span>
+          <div class="sg-hero__tile">
+            <Image
+              src={icon}
+              alt="The Draft app icon"
+              widths={[240, 480, 720]}
+              sizes="(max-width: 900px) 52vw, 240px"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-band sg-band--surface" id="sg-steps" aria-labelledby="sg-steps-title">
+      <div class="sg-band__inner">
+        <div class="sg-head">
+          <p class="sg-eyebrow">How it works</p>
+          <h2 id="sg-steps-title" class="sg-h2">You don't have to write. Look, and talk.</h2>
+          <p class="sg-sub">
+            Switch photos without stopping the recording, and what you said is sorted photo by
+            photo.
+          </p>
+        </div>
+
+        <ol class="sg-steps">
+          {
+            steps.map((step) => (
+              <li class="sg-step">
+                <span class="sg-step__num" aria-hidden="true" />
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="sg-band sg-band--alt" id="sg-features" aria-labelledby="sg-features-title">
+      <div class="sg-band__inner">
+        <div class="sg-head">
+          <p class="sg-eyebrow">Features</p>
+          <h2 id="sg-features-title" class="sg-h2">From spoken words to an article.</h2>
+        </div>
+
+        <ul class="sg-features">
+          {
+            features.map((feature) => (
+              <li class="sg-feature">
+                <span class="sg-feature__icon">
+                  <Icon name={feature.icon} />
+                </span>
+                <div class="sg-feature__text">
+                  <h3>{feature.title}</h3>
+                  <p>{feature.body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="sg-band sg-band--surface" id="sg-plans" aria-labelledby="sg-plans-title">
+      <div class="sg-band__inner">
+        <div class="sg-head">
+          <p class="sg-eyebrow">Plans</p>
+          <h2 id="sg-plans-title" class="sg-h2">Start free. Pay only for what you need.</h2>
+          <p class="sg-sub">
+            Writing the article is free. If exporting is all you need, buy it outright; if you lean
+            on the AI, AI Plus is the one.
+          </p>
+        </div>
+
+        <ul class="sg-plans">
+          {
+            plans.map((plan) => (
+              <li class="sg-plan" data-featured={plan.featured}>
+                <div class="sg-plan__head">
+                  <h3>{plan.name}</h3>
+                  {plan.featured && <span class="sg-badge">For heavy AI use</span>}
+                </div>
+                <p class="sg-plan__price">
+                  <strong>{plan.price}</strong>
+                  <span>{plan.unit}</span>
+                </p>
+                <p class="sg-plan__quota">{plan.quota}</p>
+                <ul class="sg-plan__list">
+                  {plan.points.map((point) => (
+                    <li>
+                      <Icon name="check" />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="sg-table-wrap">
+          <table class="sg-table">
+            <caption>What each plan can do</caption>
+            <thead>
+              <tr>
+                <th scope="col">Feature</th>
+                <th scope="col">Free</th>
+                <th scope="col">Export plan</th>
+                <th scope="col">AI Plus</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                comparison.map((row) => (
+                  <tr>
+                    <th scope="row">{row.label}</th>
+                    <td>
+                      <span class="sg-mark" data-on={row.free === '✓'}>
+                        {row.free}
+                      </span>
+                      {row.free === '—' && <span class="sg-sr">not available</span>}
+                    </td>
+                    <td>
+                      <span class="sg-mark" data-on={row.exportPlan === '✓'}>
+                        {row.exportPlan}
+                      </span>
+                      {row.exportPlan === '—' && <span class="sg-sr">not available</span>}
+                    </td>
+                    <td>
+                      <span class="sg-mark" data-on={row.ai === '✓'}>
+                        {row.ai}
+                      </span>
+                      {row.ai === '—' && <span class="sg-sr">not available</span>}
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <p class="sg-note sg-note--fine">
+          The monthly and yearly export plans and AI Plus are auto-renewing subscriptions. There is
+          no free trial. They renew automatically unless cancelled at least 24 hours before the end
+          of the period. Purchases, renewals, cancellations and restores all go through the App
+          Store; cancel under Settings &gt; Apple ID &gt; Subscriptions. The one-time and yearly
+          export plans keep exporting available after the initial purchase. The AI Plus monthly
+          allowance resets each calendar month. Prices shown are those of the Japanese App Store —
+          the amount shown in your own App Store is the one that applies.
+        </p>
+      </div>
+    </section>
+
+    <section class="sg-band sg-band--alt" id="sg-faq" aria-labelledby="sg-faq-title">
+      <div class="sg-band__inner">
+        <div class="sg-head">
+          <p class="sg-eyebrow">FAQ</p>
+          <h2 id="sg-faq-title" class="sg-h2">Before you start.</h2>
+        </div>
+
+        <ul class="sg-faq">
+          {
+            faqs.map((faq) => (
+              <li class="sg-faq__item">
+                <h3>{faq.q}</h3>
+                <p>{faq.a}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="sg-band sg-band--surface sg-privacy" aria-labelledby="sg-privacy-title">
+      <div class="sg-band__inner">
+        <div class="sg-privacy__head">
+          <span class="sg-privacy__icon">
+            <Icon name="lock" />
+          </span>
+          <h2 id="sg-privacy-title" class="sg-h2">Your photos and your voice stay on the device.</h2>
+        </div>
+
+        <ul class="sg-checks">
+          {
+            privacyPoints.map((point) => (
+              <li>
+                <Icon name="check" />
+                <span>{point}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="sg-note">
+          See the <a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a
+          > for the details.
+        </p>
+      </div>
+    </section>
+
+    <section class="sg-band sg-closing">
+      <div class="sg-band__inner">
+        <h2 class="sg-h2">{app.tagline}</h2>
+        <p class="sg-sub">Say it the same day, while the memory is still sharp.</p>
+        <div class="sg-cta sg-cta--center">
+          {
+            app.appStoreUrl && (
+              <a class="sg-btn sg-btn--primary" href={app.appStoreUrl} rel="noopener">
+                <Icon name="apple" />
+                Download on the App Store
+              </a>
+            )
+          }
+        </div>
+        <p class="sg-note sg-note--fine">
+          The outline and the body text are generated by AI. Please check them yourself before
+          publishing or sharing.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="sg-footer">
+    <div class="sg-footer__inner">
+      <p class="sg-footer__brand">{app.name}</p>
+      <nav class="sg-footer__links" aria-label="Footer">
+        <a href={localizePath('', locale)}>Home</a>
+        <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
+        <a href={localizePath(`${app.slug}/privacy/`, locale)}>{t(locale, 'nav.privacy')}</a>
+        <a href={localizePath(`${app.slug}/terms/`, locale)}>{t(locale, 'nav.terms')}</a>
+        <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+      </nav>
+      <LanguageSwitcher locale={locale} />
+      <p class="sg-footer__meta">&copy; {year} {site.operatorName}</p>
+    </div>
+  </footer>
+
+  <script type="application/ld+json" is:inline set:html={faqJsonLd} />
+</BaseLayout>

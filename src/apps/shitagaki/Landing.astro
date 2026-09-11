@@ -25,7 +25,40 @@ const supportEmail = getSupportEmail(app);
 const year = new Date().getFullYear();
 
 const description =
-  '下書きは、旅先や日常の写真を見ながら話すだけで、AI が見出し付きの記事の下書きに整える iPhone アプリです。録音を止めずに写真をスワイプすると、話した内容が見ていた写真に自動で紐づきます。';
+  '下書きは、旅先や日常の写真を見ながら話すだけで、AI が見出し付きのブログ記事・旅行記の下書きに整える iPhone / iPad アプリです。録音を止めずに写真をスワイプすると、話した内容が見ていた写真に自動で紐づきます。Markdown / HTML / ZIP で書き出せて、アカウント登録は不要。App Store で無料配信中です。';
+
+const faqs = [
+  {
+    q: '下書きは無料で使えますか？',
+    a: '無料で使えます。下書きの作成・録音・メモ・構成の編集・プレビューに制限はありません。AI の構成生成だけが通算 10 回までの無料枠で、書き出しは書き出しプランまたは AI Plus でご利用いただけます。',
+  },
+  {
+    q: '写真や録音はサーバーに送られますか？',
+    a: '送りません。写真・録音・メモは端末内にだけ保存されます。AI 構成生成を実行したときだけ、タイトルとメモ本文、撮影日時などのテキストを送ります。画像ファイルそのものを送ることはありません。',
+  },
+  {
+    q: 'オフラインでも使えますか？',
+    a: 'AI 構成生成以外はオフラインで使えます。写真の選択、録音、文字起こし、メモの編集、プレビューまでは通信なしで完結します。',
+  },
+  {
+    q: '書き出した記事はブログにそのまま貼れますか？',
+    a: 'Markdown / HTML / ZIP で書き出せます。ZIP には画像も含まれるので、ブログ記事の下書きとしてそのまま持ち込めます。',
+  },
+  {
+    q: '対応している端末と iOS のバージョンは？',
+    a: 'iPhone / iPad に対応し、iOS 26 以降が必要です。端末内で文字起こしを行うため、iOS 26 の音声認識を利用しています。',
+  },
+] as const;
+
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: { '@type': 'Answer', text: faq.a },
+  })),
+});
 
 const steps = [
   {
@@ -173,11 +206,13 @@ const privacyPoints = [
 ---
 
 <BaseLayout
-  title={app.name}
+  title="写真を見ながら話すだけで記事の下書きができる AI 日記アプリ"
   app={app}
   locale={locale}
   description={description}
   ogImage={icon.src}
+  schemaCategory="LifestyleApplication"
+  isAppHome
 >
   <a class="sg-skip" href="#sg-main">本文へスキップ</a>
 
@@ -191,8 +226,19 @@ const privacyPoints = [
       <nav class="sg-nav__links" aria-label="ページ内リンク">
         <a href="#sg-steps" data-optional>使い方</a>
         <a href="#sg-features" data-optional>機能</a>
+        <a href="#sg-faq" data-optional>よくある質問</a>
         <a href="#sg-plans">プラン</a>
         <a href={localizePath(`${app.slug}/support/`, locale)}>{t(locale, 'nav.support')}</a>
+        {
+          app.appStoreUrl && (
+            <a class="sg-btn sg-btn--primary sg-btn--sm" href={app.appStoreUrl} rel="noopener">
+              <Icon name="apple" />
+              <span>
+                App Store<span class="sg-nav__cta-suffix"> で入手</span>
+              </span>
+            </a>
+          )
+        }
       </nav>
     </div>
   </header>
@@ -202,7 +248,7 @@ const privacyPoints = [
       <div class="sg-band__inner sg-hero__inner">
         <div class="sg-hero__copy">
           <p class="sg-hero__badges">
-            <span class="sg-badge sg-badge--dot">App Store にて近日公開</span>
+            <span class="sg-badge sg-badge--dot">App Store で配信中</span>
           </p>
           <h1 class="sg-h1">写真を見ながら、<br />話すだけ。</h1>
           <p class="sg-lead">
@@ -210,16 +256,22 @@ const privacyPoints = [
             が見出し付きの記事の下書きに整えます。文章を書くのが得意でなくても、自分の言葉がそのまま記事になります。
           </p>
           <div class="sg-cta">
-            <a class="sg-btn sg-btn--primary" href="#sg-steps">
+            {
+              app.appStoreUrl && (
+                <a class="sg-btn sg-btn--primary" href={app.appStoreUrl} rel="noopener">
+                  <Icon name="apple" />
+                  App Store で入手（無料）
+                </a>
+              )
+            }
+            <a class="sg-btn sg-btn--ghost" href="#sg-steps">
               使い方を見る
               <Icon name="chevron" />
             </a>
-            <a class="sg-btn sg-btn--ghost" href={localizePath(`${app.slug}/support/`, locale)}>
-              {t(locale, 'nav.support')}
-              <Icon name="chevron" />
-            </a>
           </div>
-          <p class="sg-hero__meta">iPhone / iPad に対応｜iOS 26 以降が必要です</p>
+          <p class="sg-hero__meta">
+            iPhone / iPad に対応｜iOS 26 以降が必要です{app.version && `｜v${app.version}`}
+          </p>
         </div>
 
         <div class="sg-hero__art">
@@ -377,7 +429,27 @@ const privacyPoints = [
       </div>
     </section>
 
-    <section class="sg-band sg-band--alt sg-privacy" aria-labelledby="sg-privacy-title">
+    <section class="sg-band sg-band--alt" id="sg-faq" aria-labelledby="sg-faq-title">
+      <div class="sg-band__inner">
+        <div class="sg-head">
+          <p class="sg-eyebrow">よくある質問</p>
+          <h2 id="sg-faq-title" class="sg-h2">はじめる前に、気になるところ。</h2>
+        </div>
+
+        <ul class="sg-faq">
+          {
+            faqs.map((faq) => (
+              <li class="sg-faq__item">
+                <h3>{faq.q}</h3>
+                <p>{faq.a}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="sg-band sg-band--surface sg-privacy" aria-labelledby="sg-privacy-title">
       <div class="sg-band__inner">
         <div class="sg-privacy__head">
           <span class="sg-privacy__icon">
@@ -410,7 +482,14 @@ const privacyPoints = [
         <h2 class="sg-h2">{app.tagline}</h2>
         <p class="sg-sub">思い出が薄れないうちに、その日のうちに話しておく。</p>
         <div class="sg-cta sg-cta--center">
-          <span class="sg-badge sg-badge--dot">App Store にて近日公開</span>
+          {
+            app.appStoreUrl && (
+              <a class="sg-btn sg-btn--primary" href={app.appStoreUrl} rel="noopener">
+                <Icon name="apple" />
+                App Store で入手（無料）
+              </a>
+            )
+          }
         </div>
         <p class="sg-note sg-note--fine">
           構成や本文は AI が生成したものです。公開・共有する前に、内容をご自身でご確認ください。
@@ -433,4 +512,6 @@ const privacyPoints = [
       <p class="sg-footer__meta">&copy; {year} {site.operatorName}</p>
     </div>
   </footer>
+
+  <script type="application/ld+json" is:inline set:html={faqJsonLd} />
 </BaseLayout>
