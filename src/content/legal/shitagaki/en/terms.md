@@ -22,6 +22,8 @@ The App is an iOS app for turning what you say while looking at photos you picke
 
 Creating drafts, recording, memos, editing the outline and previewing are free. On the free tier, AI outline generation is limited to **10 runs in total**. That count never resets, and regenerating counts as another run.
 
+Once the free quota is gone, watching a **rewarded video** through to the end — a video ad that plays only when you choose it — earns one AI outline generation (once a day, up to five a calendar month) or one export (once a day). Closing the video early grants nothing. Earned runs do not expire, but they cannot be transferred or refunded, and a video may be unavailable depending on ad inventory. AI Plus subscribers, and anyone who has bought exporting, are not shown the corresponding offer.
+
 ## 4. In-app purchases
 
 The App offers the following paid plans.

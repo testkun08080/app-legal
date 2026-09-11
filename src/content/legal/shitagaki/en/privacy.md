@@ -25,6 +25,7 @@ The App **does not require an account**. Drafts, photo references, recordings an
 | AI outline generation counts | Calculating what is left of the free and monthly quotas | SQLite on your device (counts only; generated content is not recorded) |
 | App settings (theme, export quality and so on) | Keeping your preferences | On your device |
 | Purchase state | Deciding which purchased features are unlocked | RevenueCat, under an anonymous ID that is not tied to an account |
+| Advertising identifiers and usage data | Serving rewarded video and preventing abuse | Google AdMob, only when you choose to watch a video |
 
 ## 3. What is sent out for AI outline generation
 
@@ -46,6 +47,7 @@ The Worker's operational logs may record processing volume such as token counts,
 | RevenueCat | Checking purchase state | RevenueCat, Inc. |
 | Cloudflare Workers | Relaying AI outline generation | Cloudflare, Inc. |
 | Groq | Generating the article outline | Groq, Inc. |
+| Google AdMob | Serving rewarded video | Google LLC |
 
 Information handled by each service is subject to that service's own privacy policy.
 
@@ -53,6 +55,7 @@ Information handled by each service is subject to that service's own privacy pol
 - RevenueCat: https://www.revenuecat.com/privacy
 - Cloudflare: https://www.cloudflare.com/privacypolicy/
 - Groq: https://groq.com/privacy-policy
+- Google: https://policies.google.com/privacy
 
 ## 5. Device permissions
 
@@ -64,9 +67,17 @@ The App may ask for the permissions below, always after explaining why it needs 
 
 **The App never asks for location permission.** When a photo carries a capture location, the App may show a place name derived from it, but it does not request Location Services access.
 
-## 6. Tracking
+## 6. Advertising and tracking
 
-The App does not serve ads and does not track you for advertising. App Tracking Transparency (ATT) is not used. No analytics SDK is embedded.
+The only advertising in the App is a **rewarded video you choose to watch**. Banners and interstitials are never shown on their own. The rewarded video exists so that, once the free AI outline quota is gone, you can earn one more generation (once a day, up to five a calendar month), or one export (once a day). It is never offered to AI Plus subscribers or to anyone who has bought exporting.
+
+Rewarded video is served by Google AdMob. Ads are always requested as **non-personalised** — not based on your behaviour.
+
+- **App Tracking Transparency (ATT) permission is never requested.** No tracking consent dialog appears.
+- You are never tracked across other apps or websites for advertising.
+- No analytics SDK is embedded.
+
+Information AdMob handles to serve ads and prevent abuse is subject to [Google's privacy policy](https://policies.google.com/privacy).
 
 ## 7. Retention and deletion
 

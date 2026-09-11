@@ -39,6 +39,10 @@ const faqs = [
     a: 'Export as Markdown, HTML or ZIP. The ZIP includes the images, so it carries over to a blog post as a finished draft.',
   },
   {
+    q: 'Are there ads?',
+    a: 'Only a rewarded video you choose to watch. Banners and interstitials never appear on their own. Once the free AI outline quota is gone, you can optionally watch one to earn a single run (AI: once a day, up to five a month; export: once a day). Ads are always non-personalised, and ATT permission is never requested.',
+  },
+  {
     q: 'Which devices and iOS versions are supported?',
     a: 'iPhone and iPad running iOS 26 or later. Transcription runs on the device using the speech recognition introduced in iOS 26.',
   },
@@ -148,6 +152,7 @@ const plans = [
       'Reordering the outline cards and previewing',
       'Display settings and themes',
       'The free quota is 10 runs in total and never resets',
+      'Once it is gone, watch a video to earn one more run',
     ],
   },
   {
@@ -185,7 +190,8 @@ const comparison = [
   { label: 'Markdown / HTML / ZIP export', free: '—', exportPlan: '✓', ai: '✓' },
   { label: 'Image, display and theme settings', free: '✓', exportPlan: '✓', ai: '✓' },
   { label: 'Search and archive', free: '✓', exportPlan: '✓', ai: '✓' },
-  { label: 'Ads', free: 'none', exportPlan: 'none', ai: 'none' },
+  // The free AI quota is shared with the export plan, so only AI Plus never sees the offer
+  { label: 'Ads', free: 'opt-in video only', exportPlan: 'opt-in video only', ai: 'none' },
 ];
 
 const privacyPoints = [
@@ -195,7 +201,8 @@ const privacyPoints = [
   'Only when you run AI outline generation is text sent — the title, the memo text, the capture time',
   'Whether the place name is sent can be turned off per draft (coordinates are never sent)',
   'Location permission is never requested',
-  'No ads, and no tracking for advertising',
+  'The only ad is a rewarded video you choose to watch',
+  'No tracking for advertising, and no ATT prompt',
 ];
 ---
 

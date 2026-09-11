@@ -29,6 +29,10 @@ A place name is passed to outline generation only when "Use the capture location
 
 The free plan allows **10 runs in total** and never resets. AI Plus raises that to **50 a month**, restored on the 1st. The remaining count is shown in the App's settings screen.
 
+### Are there ads?
+
+Only a rewarded video you choose to watch. Banners and interstitials never appear on their own. Once the free AI outline quota is gone, you can optionally watch one to earn a single run (AI: once a day, up to five a calendar month; export: once a day). Closing the video early grants nothing, and AI Plus subscribers are never shown the offer. Ads are always non-personalised, and ATT permission is never requested.
+
 ### Which plan should I pick?
 
 If exporting is all you need, the one-time purchase is the one — pay once, keep it for good. If you want to rebuild with AI over and over, pick AI Plus (50 generations a month, plus unlimited exporting while subscribed). You can compare them any time under Settings > See plans.
