@@ -46,7 +46,8 @@ const softwareAppJsonLd =
         offers: {
           '@type': 'Offer',
           price: '0',
-          priceCurrency: 'JPY',
+          // 本体は無料配布。表示通貨だけロケールに合わせる（課金は App Store 側の各ストアフロント価格）
+          priceCurrency: locale === 'ja' ? 'JPY' : 'USD',
           url: app.appStoreUrl,
         },
       })
@@ -80,7 +81,7 @@ const softwareAppJsonLd =
     {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
     {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
 
-    {softwareAppJsonLd && <script type="application/ld+json" set:html={softwareAppJsonLd} />}
+    {softwareAppJsonLd && <script type="application/ld+json" is:inline set:html={softwareAppJsonLd} />}
 
     {themeCss && <style is:inline set:html={themeCss} />}
   </head>
