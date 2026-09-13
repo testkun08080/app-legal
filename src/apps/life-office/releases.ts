@@ -14,6 +14,28 @@ export type Release = {
  */
 export const releases: Release[] = [
   {
+    version: '1.4.2',
+    date: '2026-09-13',
+    highlights: {
+      ja: [
+        'カレンダーで未記録・休日出勤が分かりやすくなりました。日付をタップして記録の追加・編集ができます',
+        '検索で、出勤前メモと退勤コメントの有無でも絞り込めるようにしました',
+        'Pro の機能をプレビューで見られるようにしました（購入は各画面の案内から）',
+        '文字サイズ（Dynamic Type）に合わせて画面が読みやすくなりました',
+        'タイ語の打刻表記を「ตอกบัตร」に更新しました',
+        '未来の日付への後打刻をできないようにしました',
+      ],
+      en: [
+        'Unrecorded and holiday-work days are clearer on the calendar. Tap a day to add or edit a record',
+        'Search can filter by whether a clock-in or clock-out note exists',
+        'Preview Pro features instead of a blank lock screen (upgrade from each screen)',
+        'Layouts now follow iOS Dynamic Type',
+        'Updated Thai punch copy to ตอกบัตร',
+        'Manual punches can no longer be added for future dates',
+      ],
+    },
+  },
+  {
     version: '1.3.0',
     date: '2026-09-05',
     highlights: {

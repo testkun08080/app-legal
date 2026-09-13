@@ -82,6 +82,11 @@ const features = [
   { icon: 'chart', title: '月次統計', body: 'その月の出勤を集計して表示します。' },
   { icon: 'bell', title: 'リマインダー', body: '指定時刻に打刻をお知らせします。' },
   {
+    icon: 'theme',
+    title: 'ライトテーマ',
+    body: '無料ではライト固定。ダークとシステム追従は Pro で選べます。',
+  },
+  {
     icon: 'note',
     title: '日本語 / 英語',
     body: '端末の言語に追従します。設定からいつでも切り替えられます。',
@@ -100,6 +105,11 @@ const proFeatures = [
     body: '今日の打刻状況と今月の合計勤務時間を、ホーム画面から一目で。',
   },
   {
+    icon: 'theme',
+    title: 'ダークテーマ',
+    body: 'ダークとシステム追従を手動で選べます。ライトは無料のまま使えます。',
+  },
+  {
     icon: 'chart',
     title: '拡張統計',
     body: '曜日ごとの週次集計と、出勤時刻のヒートマップ。',
@@ -114,11 +124,6 @@ const proFeatures = [
     title: 'CSV / PDF',
     body: '月・年・期間指定で書き出し（複数月は ZIP）。CSV からの取り込みにも対応。',
   },
-  {
-    icon: 'theme',
-    title: 'ライト / ダークテーマ',
-    body: 'システム追従に加えて、ライト・ダークを手動で選べます。',
-  },
 ] as const;
 
 const comparison = [
@@ -128,7 +133,8 @@ const comparison = [
   { label: 'レシート表示・写真保存・共有', free: true },
   { label: '記録一覧・カレンダー・月次統計', free: true },
   { label: '目標時刻・勤務曜日・毎日のリマインダー', free: true },
-  { label: 'ライト / ダークテーマの手動切り替え', free: false },
+  { label: 'ライトテーマ', free: true },
+  { label: 'ダークテーマ／システム追従', free: false },
   { label: 'ホーム画面ウィジェット', free: false },
   { label: '拡張統計（週次・ヒートマップ）', free: false },
   { label: 'メモ検索', free: false },

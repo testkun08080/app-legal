@@ -81,6 +81,11 @@ const features = [
   { icon: 'chart', title: 'Monthly stats', body: 'Summarize and display your attendance for the month.' },
   { icon: 'bell', title: 'Reminders', body: 'Get notified to punch at your chosen time.' },
   {
+    icon: 'theme',
+    title: 'Light theme',
+    body: 'The free plan stays on light. Dark and system follow unlock with Pro.',
+  },
+  {
     icon: 'note',
     title: 'Japanese / English',
     body: 'Follows your device language. Switch anytime in Settings.',
@@ -99,6 +104,11 @@ const proFeatures = [
     body: 'See today\'s punch status and this month\'s total hours at a glance.',
   },
   {
+    icon: 'theme',
+    title: 'Dark theme',
+    body: 'Pick dark or follow the system. Light stays free.',
+  },
+  {
     icon: 'chart',
     title: 'Extended statistics',
     body: 'Weekly summaries by day of week and a clock-in time heatmap.',
@@ -113,11 +123,6 @@ const proFeatures = [
     title: 'CSV / PDF',
     body: 'Export by month, year, or custom range (multi-month as ZIP). Import from CSV too.',
   },
-  {
-    icon: 'theme',
-    title: 'Light / dark theme',
-    body: 'Pick light or dark manually, on top of following the system.',
-  },
 ] as const;
 
 const comparison = [
@@ -127,7 +132,8 @@ const comparison = [
   { label: 'Receipt view, photo save & share', free: true },
   { label: 'Record list, calendar & monthly stats', free: true },
   { label: 'Target time, work days & daily reminders', free: true },
-  { label: 'Manual light / dark theme switching', free: false },
+  { label: 'Light theme', free: true },
+  { label: 'Dark theme / system follow', free: false },
   { label: 'Home screen widget', free: false },
   { label: 'Extended stats (weekly & heatmap)', free: false },
   { label: 'Note search', free: false },
