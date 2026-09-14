@@ -6,7 +6,7 @@ locale: en
 updated: 2026-09-11
 ---
 
-> This is a translation of the Japanese original. If the two differ, the [Japanese version](https://legal.testkun.net/shitagaki/terms/) governs.
+> This is a translation of the Japanese original. If the two differ, the [Japanese version](https://apps.testkun.net/shitagaki/terms/) governs.
 
 These terms set out the conditions for using Draft (下書き in the Japanese App Store; "the App"). By using the App you are deemed to have agreed to them.
 
@@ -16,7 +16,7 @@ In addition to these terms, use of the App is subject to Apple's [Standard End U
 
 ## 2. What the App does
 
-The App is an iOS app for turning what you say while looking at photos you picked into a draft article in Markdown. Recording, transcription, editing and previewing happen on your device; only AI outline generation uses an external service. See the [Privacy Policy](https://legal.testkun.net/en/shitagaki/privacy/) for details on what is handled.
+The App is an iOS app for turning what you say while looking at photos you picked into a draft article in Markdown. Recording, transcription, editing and previewing happen on your device; only AI outline generation uses an external service. See the [Privacy Policy](https://apps.testkun.net/en/shitagaki/privacy/) for details on what is handled.
 
 ## 3. What is free
 
@@ -84,4 +84,4 @@ These terms are governed by the laws of Japan. For any dispute concerning the Ap
 
 ## 12. Contact
 
-For questions about the App, please use the [support page](https://legal.testkun.net/en/shitagaki/support/).
+For questions about the App, please use the [support page](https://apps.testkun.net/en/shitagaki/support/).

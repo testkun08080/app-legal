@@ -6,7 +6,7 @@ locale: en
 updated: 2026-09-11
 ---
 
-> This is a translation of the Japanese original. If the two differ, the [Japanese version](https://legal.testkun.net/shitagaki/privacy/) governs.
+> This is a translation of the Japanese original. If the two differ, the [Japanese version](https://apps.testkun.net/shitagaki/privacy/) governs.
 
 ## 1. Introduction
 
@@ -95,4 +95,4 @@ If we change this policy we will update this page and revise the last-updated da
 
 ## 10. Contact
 
-For questions about this policy, please use the [support page](https://legal.testkun.net/en/shitagaki/support/) or the email address at the bottom of this page.
+For questions about this policy, please use the [support page](https://apps.testkun.net/en/shitagaki/support/) or the email address at the bottom of this page.

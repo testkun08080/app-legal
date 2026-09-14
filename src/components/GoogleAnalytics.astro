@@ -1,0 +1,25 @@
+---
+import type { PageAnalytics } from '@/lib/analytics';
+
+interface Props {
+  measurementId: string;
+  analytics: PageAnalytics;
+}
+
+const { measurementId, analytics } = Astro.props;
+const { appSlug, pageKind } = analytics;
+
+// gtag config must be inline so first paint can send page_view with custom params.
+const configScript = `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', ${JSON.stringify(measurementId)}, {
+  send_page_view: true,
+  content_group1: ${JSON.stringify(appSlug)},
+  app_slug: ${JSON.stringify(appSlug)},
+  page_kind: ${JSON.stringify(pageKind)}
+});`;
+---
+
+<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}></script>
+<script is:inline set:html={configScript} />

@@ -5,9 +5,14 @@ export const site = {
   operatorName: 'testkun08080',
   defaultSupportEmail: 'support@legal.testkun.net',
   githubUsername: 'testkun08080',
-  repoName: 'app-legal',
+  repoName: 'apps',
   /** 公開 URL（GitHub Pages カスタムドメイン） */
-  publicBaseUrl: 'https://legal.testkun.net',
+  publicBaseUrl: 'https://apps.testkun.net',
+  /**
+   * GA4 Measurement ID（例 G-XXXXXXXXXX）。
+   * 空文字ならタグを出さない。本番ビルドでのみ注入する。
+   */
+  googleAnalyticsId: 'G-X4DTQF4739',
 } as const;
 
 export type SiteConfig = typeof site;

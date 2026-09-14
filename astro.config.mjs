@@ -1,8 +1,8 @@
 import { defineConfig } from 'astro/config';
 
-// GitHub Pages: https://legal.testkun.net/
+// GitHub Pages: https://apps.testkun.net/
 export default defineConfig({
-  site: 'https://legal.testkun.net',
+  site: 'https://apps.testkun.net',
   base: '/',
   output: 'static',
   i18n: {
