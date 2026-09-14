@@ -2,7 +2,7 @@
 
 ## Cursor Cloud specific instructions
 
-This repo is a single **Astro static site** (`app-legal`) that generates per-app landing pages plus shared privacy/terms/support legal pages. There is no backend, database, or external service, and no secrets/`.env` are required.
+This repo is a single **Astro static site** (`apps`) that generates per-app landing pages plus shared privacy/terms/support legal pages. There is no backend, database, or external service, and no secrets/`.env` are required.
 
 ### Services
 

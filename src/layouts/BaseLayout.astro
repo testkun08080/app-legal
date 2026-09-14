@@ -5,6 +5,8 @@ import { themeToCss } from '@/lib/theme';
 import { site } from '@/config/site';
 import { defaultLocale, type Locale } from '@/config/i18n';
 import { getAlternateUrls, resolveLocalized } from '@/i18n';
+import { parsePageAnalytics } from '@/lib/analytics';
+import GoogleAnalytics from '@/components/GoogleAnalytics.astro';
 
 interface Props {
   title: string;
@@ -29,6 +31,9 @@ const canonical = new URL(Astro.url.pathname, site.publicBaseUrl).href;
 const ogImageUrl = ogImage ? new URL(ogImage, site.publicBaseUrl).href : undefined;
 const themeCss = app ? themeToCss(app.slug, app.theme, app.darkTheme) : undefined;
 const alternateUrls = getAlternateUrls(Astro.url.pathname, locale);
+const pageAnalytics = parsePageAnalytics(Astro.url.pathname, app?.slug);
+const gaId = site.googleAnalyticsId;
+const enableGa = import.meta.env.PROD && gaId.length > 0;
 
 // アプリの配信ページ（トップ）にのみ SoftwareApplication の構造化データを付与する。
 // 配信 URL が未設定＝未公開アプリなので、公開前のページには出さない。
@@ -84,6 +89,7 @@ const softwareAppJsonLd =
     {softwareAppJsonLd && <script type="application/ld+json" is:inline set:html={softwareAppJsonLd} />}
 
     {themeCss && <style is:inline set:html={themeCss} />}
+    {enableGa && <GoogleAnalytics measurementId={gaId} analytics={pageAnalytics} />}
   </head>
   <body>
     <slot />

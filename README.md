@@ -1,4 +1,4 @@
-# app-legal
+# apps
 
 アプリごとの専用ページと、App Store 提出用のプライバシーポリシー・利用規約・サポートページを公開する Astro サイトです。
 
@@ -8,12 +8,12 @@
 
 現在の設定はカスタムドメイン運用です。
 
-- サイト: `https://legal.testkun.net/`
-- アプリページ: `https://legal.testkun.net/life-office/`
-- サポート: `https://legal.testkun.net/life-office/support/`
-- 例: `https://legal.testkun.net/life-office/privacy/`
+- サイト: `https://apps.testkun.net/`
+- アプリページ: `https://apps.testkun.net/life-office/`
+- サポート: `https://apps.testkun.net/life-office/support/`
+- 例: `https://apps.testkun.net/life-office/privacy/`
 
-> `astro.config.mjs` は `base: '/'` です。サブパス（`/app-legal`）前提ではありません。
+> `astro.config.mjs` は `base: '/'` です。サブパス前提ではありません。
 
 > 以前 `/<app>/` がサポートページでした。サポートは `/<app>/support/` に移しています。App Store のサポート URL を更新してください。
 
@@ -39,8 +39,9 @@ export const site = {
   operatorName: 'Your Name or Brand',
   defaultSupportEmail: 'support@example.com',
   githubUsername: 'your-github-username',
-  repoName: 'app-legal',
+  repoName: 'apps',
   publicBaseUrl: 'https://example.com',
+  googleAnalyticsId: '',
 } as const;
 ```
 
@@ -50,6 +51,8 @@ export const site = {
 site: 'https://example.com',
 base: '/',
 ```
+
+`googleAnalyticsId` に GA4 の Measurement ID（`G-XXXXXXXXXX`）を入れると、本番ビルド時のみ gtag が注入されます。空文字のままならタグは出ません。アプリ別分析用に `content_group1` / `app_slug` / `page_kind` を送信します。
 
 ### 3. ローカル確認
 
@@ -66,6 +69,34 @@ npm run dev
 3. `main` ブランチへ push すると [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) がデプロイ
 
 カスタムドメインを使う場合は [`public/CNAME`](public/CNAME) を実運用のドメインに合わせて設定してください。
+
+### 5. `apps.testkun.net` 移行の手動チェックリスト
+
+コード側のドメイン・GA タグ・リポ名メタはリポ内で揃えています。公開前に以下を手元で実施してください。
+
+**GitHub**
+
+1. リポを `apps` に Rename（必要なら local `git remote set-url`）
+2. Pages の Custom domain を `apps.testkun.net` に設定し Enforce HTTPS
+3. `main` へ push して Actions デプロイを確認
+
+**Cloudflare（`testkun.net` ゾーン）**
+
+1. DNS: `apps` CNAME → 既存 `legal` と同じターゲット（通常 `testkun08080.github.io`）、プロキシ設定も同じ
+2. Redirect Rule: Host `legal.testkun.net` → `https://apps.testkun.net${uri.path}${uri.query}`（301）
+3. Email Routing（`support@legal.testkun.net`）はそのまま
+
+**GA4**
+
+1. Web データストリーム `https://apps.testkun.net` を作成し Measurement ID（`G-…`）を取得
+2. [`src/config/site.ts`](src/config/site.ts) の `googleAnalyticsId` に設定して再デプロイ
+3. カスタム定義（イベント）: `app_slug` / `page_kind`
+4. Realtime で `content_group1`（アプリ slug）と `page_kind` を確認
+
+**App Store Connect**
+
+- 各アプリの Privacy / Support / Terms URL を `https://apps.testkun.net/...` に更新
+- 必要なら各 `privacy.md` に Google Analytics の記載を追記
 
 ## 構成
 
